@@ -15,8 +15,8 @@ int main() {
 
     if (command == "exit") {
       running = false;
+    } else {
+      std::cerr << command << ": command not found\n";
     }
-
-    std::cerr << command << ": command not found\n";
   }
 }
