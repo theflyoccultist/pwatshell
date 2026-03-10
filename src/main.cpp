@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-void typeOption(std::string command) {
+void typeOption(std::string &command) {
   std::string userInput = str::rtrim(command);
 
   if (opts::resolveOption(userInput) != Options::Invalid) {
