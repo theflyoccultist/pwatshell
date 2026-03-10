@@ -12,6 +12,7 @@ namespace shell {
 void invalid(std::string &command) {
   std::cerr << command << ": command not found\n";
 }
+
 void echo(std::string &command) { std::cout << str::rtrim(command) << "\n"; }
 
 std::vector<std::string> generatePathList() {
@@ -22,7 +23,7 @@ std::vector<std::string> generatePathList() {
 
 static const std::vector<std::string> pathList = generatePathList();
 
-std::string getExecutablePath(const std::string &cmd) {
+fs::path getExecutablePath(const std::string &cmd) {
   for (const auto &dir : pathList) {
     fs::path candidate = fs::path(dir) / cmd;
 
@@ -34,7 +35,7 @@ std::string getExecutablePath(const std::string &cmd) {
                           (perms & fs::perms::others_exec) != fs::perms::none;
 
       if (isExecutable) {
-        return candidate.string();
+        return candidate;
       }
     }
   }
@@ -48,7 +49,8 @@ void type(std::string &command) {
   if (opts::resolveOption(userInput) != Options::Invalid) {
     std::cout << userInput << " is a shell builtin\n";
   } else if (getExecutablePath(userInput) != "") {
-    std::cout << userInput << " is " << getExecutablePath(userInput) << "\n";
+    std::cout << userInput << " is " << getExecutablePath(userInput).string()
+              << "\n";
   } else {
     std::cout << userInput << ": not found\n";
   }
