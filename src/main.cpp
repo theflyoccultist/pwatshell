@@ -38,7 +38,7 @@ void typeOption(std::string command) {
   std::string userInput = rtrim(command);
 
   if (resolveOption(userInput) != Options::Invalid) {
-    std::cout << userInput << "is a shell builtin\n";
+    std::cout << userInput << " is a shell builtin\n";
   } else {
     std::cout << userInput << ": not found\n";
   }
