@@ -13,7 +13,7 @@ std::string rtrim(std::string &s) {
   return s.substr(space + 1, s.length());
 }
 
-std::string getPath() {
+std::string getPathEnv() {
   const char *path = std::getenv("PATH");
   std::string path_str;
 

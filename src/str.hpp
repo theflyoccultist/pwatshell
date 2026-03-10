@@ -14,7 +14,7 @@ std::string ltrim(std::string &s);
 
 std::string rtrim(std::string &s);
 
-std::string getPath();
+std::string getPathEnv();
 
 std::vector<std::string> splitPath(const std::string &path);
 } // namespace str

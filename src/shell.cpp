@@ -1,7 +1,6 @@
 #include "opts.hpp"
 #include "str.hpp"
 
-#include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -15,35 +14,32 @@ void invalid(std::string &command) {
 }
 void echo(std::string &command) { std::cout << str::rtrim(command) << "\n"; }
 
-std::vector<std::string> getExecutableList() {
-  std::string pathEnv = str::getPath();
+std::vector<std::string> generatePathList() {
+  std::string pathEnv = str::getPathEnv();
   std::vector<std::string> pathList = str::splitPath(pathEnv);
-  std::vector<std::string> exeList;
+  return pathList;
+}
 
-  for (const auto &p : pathList) {
-    auto dirPath = fs::path(p);
+static const std::vector<std::string> pathList = generatePathList();
 
-    for (const auto &entry : fs::directory_iterator(dirPath)) {
-      fs::file_status fileStatus = fs::status(entry);
-      bool isExecutable =
-          (fileStatus.permissions() & fs::perms::owner_exec) != fs::perms::none;
+std::string getExecutablePath(const std::string &cmd) {
+  for (const auto &dir : pathList) {
+    fs::path candidate = fs::path(dir) / cmd;
+
+    if (fs::exists(candidate)) {
+      auto perms = fs::status(candidate).permissions();
+
+      bool isExecutable = (perms & fs::perms::owner_exec) != fs::perms::none ||
+                          (perms & fs::perms::group_exec) != fs::perms::none ||
+                          (perms & fs::perms::others_exec) != fs::perms::none;
 
       if (isExecutable) {
-        exeList.push_back(entry.path().string());
+        return candidate.string();
       }
     }
   }
 
-  return exeList;
-}
-
-std::string getExecutablePath(const std::string &userInput) {
-  const std::vector<std::string> exeList = getExecutableList();
-  const auto it = std::find(exeList.begin(), exeList.end(), userInput);
-  if (it != exeList.end()) {
-    return *it;
-  }
-  return "hello";
+  return "";
 }
 
 void type(std::string &command) {
