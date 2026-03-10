@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -22,6 +23,12 @@ Options resolveOption(std::string input) {
   return Options::Invalid;
 }
 
+static inline std::string &ltrim(std::string &s) {
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+                                  [](int c) { return !std::isspace(c); }));
+  return s;
+}
+
 int main() {
   bool running = true;
 
@@ -36,7 +43,7 @@ int main() {
 
     switch (resolveOption(command)) {
     case Options::Echo:
-      std::cout << command << "\n";
+      std::cout << ltrim(command) << "\n";
       break;
     case Options::Exit:
       running = false;
