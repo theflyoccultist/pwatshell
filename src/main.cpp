@@ -1,34 +1,12 @@
+#include "opts.hpp"
 #include "str.hpp"
-#include <cstdint>
 #include <iostream>
 #include <string>
-#include <unordered_map>
-
-enum class Options : uint8_t {
-  Echo,
-  Type,
-  Exit,
-  Invalid,
-};
-
-Options resolveOption(std::string input) {
-  static const std::unordered_map<std::string, Options> optionsMap = {
-      {"echo", Options::Echo},
-      {"type", Options::Type},
-      {"exit", Options::Exit},
-  };
-
-  auto it = optionsMap.find(input);
-  if (it != optionsMap.end()) {
-    return it->second;
-  }
-  return Options::Invalid;
-}
 
 void typeOption(std::string command) {
   std::string userInput = str::rtrim(command);
 
-  if (resolveOption(userInput) != Options::Invalid) {
+  if (opts::resolveOption(userInput) != Options::Invalid) {
     std::cout << userInput << " is a shell builtin\n";
   } else {
     std::cout << userInput << ": not found\n";
@@ -47,7 +25,7 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    switch (resolveOption(str::ltrim(command))) {
+    switch (opts::resolveOption(str::ltrim(command))) {
     case Options::Echo:
       std::cout << str::rtrim(command) << "\n";
       break;
