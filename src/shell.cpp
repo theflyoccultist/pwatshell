@@ -43,7 +43,7 @@ std::string getExecutablePath(std::string userInput) {
   if (it != exeList.end()) {
     return *it;
   }
-  return "";
+  return "hello";
 }
 
 void type(std::string &command) {
