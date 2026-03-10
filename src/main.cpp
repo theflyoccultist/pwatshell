@@ -2,10 +2,20 @@
 #include "shell.hpp"
 #include "str.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
 int main() {
+  const char *path = std::getenv("PATH");
+
+  if (path) {
+    std::string path_str = path;
+    std::cout << "PATH = " << path_str << "\n";
+  } else {
+    std::cout << "PATH is not set\n";
+  }
+
   bool running = true;
 
   while (running) {
