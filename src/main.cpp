@@ -5,6 +5,7 @@
 
 enum class Options : uint8_t {
   Echo,
+  Type,
   Exit,
   Invalid,
 };
@@ -12,6 +13,7 @@ enum class Options : uint8_t {
 Options resolveOption(std::string input) {
   static const std::unordered_map<std::string, Options> optionsMap = {
       {"echo", Options::Echo},
+      {"type", Options::Type},
       {"exit", Options::Exit},
   };
 
@@ -32,6 +34,16 @@ std::string rtrim(std::string &s) {
   return s.substr(space + 1, s.length());
 }
 
+void typeOption(std::string command) {
+  std::string userInput = rtrim(command);
+
+  if (resolveOption(command) != Options::Invalid) {
+    std::cout << userInput << "is a shell builtin\n";
+  } else {
+    std::cout << userInput << ": not found";
+  }
+}
+
 int main() {
   bool running = true;
 
@@ -47,6 +59,9 @@ int main() {
     switch (resolveOption(ltrim(command))) {
     case Options::Echo:
       std::cout << rtrim(command) << "\n";
+      break;
+    case Options::Type:
+      typeOption(command);
       break;
     case Options::Exit:
       running = false;
