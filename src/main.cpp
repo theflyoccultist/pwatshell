@@ -1,5 +1,26 @@
+#include <cstdint>
 #include <iostream>
 #include <string>
+#include <unordered_map>
+
+enum class Options : uint8_t {
+  Echo,
+  Exit,
+  Invalid,
+};
+
+Options resolveOption(std::string input) {
+  static const std::unordered_map<std::string, Options> optionsMap = {
+      {"echo", Options::Echo},
+      {"exit", Options::Exit},
+  };
+
+  auto it = optionsMap.find(input);
+  if (it != optionsMap.end()) {
+    return it->second;
+  }
+  return Options::Invalid;
+}
 
 int main() {
   bool running = true;
@@ -13,10 +34,16 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    if (command == "exit") {
+    switch (resolveOption(command)) {
+    case Options::Echo:
+      std::cout << command << "\n";
+      break;
+    case Options::Exit:
       running = false;
-    } else {
+      break;
+    case Options::Invalid:
       std::cerr << command << ": command not found\n";
+      break;
     }
   }
 }
