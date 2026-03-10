@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -23,10 +22,14 @@ Options resolveOption(std::string input) {
   return Options::Invalid;
 }
 
-static inline std::string &ltrim(std::string &s) {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-                                  [](int c) { return !std::isspace(c); }));
-  return s;
+std::string ltrim(std::string &s) {
+  int space = s.find(' ');
+  return s.substr(0, space);
+}
+
+std::string rtrim(std::string &s) {
+  int space = s.find(' ');
+  return s.substr(space, s.length());
 }
 
 int main() {
@@ -41,9 +44,9 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    switch (resolveOption(command)) {
+    switch (resolveOption(ltrim(command))) {
     case Options::Echo:
-      std::cout << ltrim(command) << "\n";
+      std::cout << rtrim(command) << "\n";
       break;
     case Options::Exit:
       running = false;
