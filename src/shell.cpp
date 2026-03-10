@@ -37,9 +37,9 @@ std::vector<std::string> getExecutableList() {
   return exeList;
 }
 
-std::string getExecutablePath(std::string userInput) {
+std::string getExecutablePath(const std::string &userInput) {
   const std::vector<std::string> exeList = getExecutableList();
-  const auto it = std::find(exeList.begin(), exeList.end(), userInput);
+  const auto it = std::find_if(exeList.begin(), exeList.end(), userInput);
   if (it != exeList.end()) {
     return *it;
   }
@@ -52,7 +52,7 @@ void type(std::string &command) {
   if (opts::resolveOption(userInput) != Options::Invalid) {
     std::cout << userInput << " is a shell builtin\n";
   } else if (getExecutablePath(userInput) != "") {
-    std::cout << userInput << "is " << getExecutablePath(userInput) << "\n";
+    std::cout << userInput << " is " << getExecutablePath(userInput) << "\n";
   } else {
     std::cout << userInput << ": not found\n";
   }
