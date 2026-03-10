@@ -1,15 +1,20 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+#ifdef _WIN32
+constexpr char PATH_LIST_SEPARATOR = ';';
+#else
+constexpr char PATH_LIST_SEPARATOR = ':';
+#endif
 
 namespace str {
-static inline std::string ltrim(std::string &s) {
-  int space = s.find(' ');
-  return s.substr(0, space);
-}
+std::string ltrim(std::string &s);
 
-static inline std::string rtrim(std::string &s) {
-  int space = s.find(' ');
-  return s.substr(space + 1, s.length());
-}
+std::string rtrim(std::string &s);
+
+std::string getPath();
+
+std::vector<std::string> splitPath(const std::string &path);
 } // namespace str
