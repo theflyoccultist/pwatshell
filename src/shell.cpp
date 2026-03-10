@@ -39,8 +39,8 @@ std::vector<std::string> getExecutableList() {
 
 std::string getExecutablePath(const std::string &userInput) {
   const std::vector<std::string> exeList = getExecutableList();
-  const auto it = std::find_if(exeList.begin(), exeList.end(), userInput);
-  if (it != exeList.end()) {
+  const auto it = std::find(exeList.begin(), exeList.end(), userInput);
+  if (it == exeList.end()) {
     return *it;
   }
   return "hello";
