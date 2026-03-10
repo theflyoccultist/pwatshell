@@ -29,7 +29,7 @@ std::string ltrim(std::string &s) {
 
 std::string rtrim(std::string &s) {
   int space = s.find(' ');
-  return s.substr(space, s.length());
+  return s.substr(space + 1, s.length());
 }
 
 int main() {
