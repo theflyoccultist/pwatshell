@@ -1,3 +1,4 @@
+#include "str.hpp"
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -24,18 +25,8 @@ Options resolveOption(std::string input) {
   return Options::Invalid;
 }
 
-std::string ltrim(std::string &s) {
-  int space = s.find(' ');
-  return s.substr(0, space);
-}
-
-std::string rtrim(std::string &s) {
-  int space = s.find(' ');
-  return s.substr(space + 1, s.length());
-}
-
 void typeOption(std::string command) {
-  std::string userInput = rtrim(command);
+  std::string userInput = str::rtrim(command);
 
   if (resolveOption(userInput) != Options::Invalid) {
     std::cout << userInput << " is a shell builtin\n";
@@ -56,9 +47,9 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    switch (resolveOption(ltrim(command))) {
+    switch (resolveOption(str::ltrim(command))) {
     case Options::Echo:
-      std::cout << rtrim(command) << "\n";
+      std::cout << str::rtrim(command) << "\n";
       break;
     case Options::Type:
       typeOption(command);
