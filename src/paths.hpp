@@ -19,6 +19,5 @@ public:
 
 private:
   static std::string getPathEnv();
-  static std::vector<std::string> splitPath(const std::string &path);
   static std::vector<std::string> generatePathList();
 };

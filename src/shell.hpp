@@ -7,4 +7,5 @@ public:
   static void echo(std::string &command);
   static void type(std::string &command);
   static void invalid(std::string &command);
+  static void executable(std::string &command);
 };

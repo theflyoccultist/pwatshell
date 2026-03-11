@@ -1,5 +1,5 @@
 #include "paths.hpp"
-#include <sstream>
+#include "str.hpp"
 #include <string>
 
 fs::path Paths::getExecutablePath(const std::string &cmd) {
@@ -37,20 +37,9 @@ std::string Paths::getPathEnv() {
   return path_str;
 }
 
-std::vector<std::string> Paths::splitPath(const std::string &path) {
-  std::vector<std::string> dirs;
-  std::stringstream ss(path);
-  std::string item;
-
-  while (std::getline(ss, item, PATH_LIST_SEPARATOR)) {
-    dirs.push_back(item);
-  }
-
-  return dirs;
-}
-
 std::vector<std::string> Paths::generatePathList() {
   std::string pathEnv = getPathEnv();
-  std::vector<std::string> pathList = splitPath(pathEnv);
+  std::vector<std::string> pathList =
+      str::splitString(pathEnv, PATH_LIST_SEPARATOR);
   return pathList;
 }

@@ -3,8 +3,11 @@
 #include "paths.hpp"
 #include "str.hpp"
 
+#include <cstring>
 #include <iostream>
 #include <string>
+#include <unistd.h>
+#include <vector>
 
 void Shell::invalid(std::string &command) {
   std::cerr << command << ": command not found\n";
@@ -24,5 +27,22 @@ void Shell::type(std::string &command) {
               << Paths::getExecutablePath(userInput).string() << "\n";
   } else {
     std::cout << userInput << ": not found\n";
+  }
+}
+
+void Shell::executable(std::string &command) {
+  std::string candidate = str::ltrim(command);
+  const char *arg0 = Paths::getExecutablePath(candidate).c_str();
+
+  std::vector<std::string> args = str::splitString(command, ' ');
+  std::vector<char *> argv;
+
+  argv.reserve(args.size());
+  for (auto &arg : args) {
+    argv.push_back(arg.data());
+  }
+
+  if (strcmp(arg0, "") != 0) {
+    execvp(arg0, argv.data());
   }
 }
