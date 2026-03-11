@@ -7,7 +7,7 @@
 
 fs::path Paths::currentPath = fs::current_path();
 
-fs::path Paths::getCurrentPath() { return fs::absolute(currentPath); }
+fs::path Paths::getCurrentPath() { return currentPath; }
 
 fs::path Paths::getExecutablePath(const std::string &cmd) {
   for (const auto &dir : pathList) {
