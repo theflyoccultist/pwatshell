@@ -31,10 +31,11 @@ fs::path Paths::getExecutablePath(const std::string &cmd) {
 const std::vector<std::string> Paths::pathList = Paths::generatePathList();
 
 int Paths::changeDirectory(const std::string &path) {
-  fs::path newPath = fs::path(path);
+  fs::path newPath = currentPath / path;
+  newPath = fs::weakly_canonical(newPath);
+  fs::current_path(newPath);
 
   if (fs::is_directory(newPath)) {
-    currentPath = newPath;
     return EXIT_SUCCESS;
   }
   return EXIT_FAILURE;
