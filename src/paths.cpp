@@ -2,6 +2,7 @@
 #include "str.hpp"
 #include <cstdlib>
 #include <filesystem>
+#include <iostream>
 #include <string>
 
 fs::path Paths::currentPath = fs::current_path();
@@ -30,17 +31,12 @@ fs::path Paths::getExecutablePath(const std::string &cmd) {
 
 const std::vector<std::string> Paths::pathList = Paths::generatePathList();
 
-int Paths::changeDirectory(const std::string &path) {
-  fs::path newPath = fs::path(path);
-  if (path.starts_with("./")) {
-    newPath = fs::path(path.substr(2, path.length()));
+void Paths::changeDirectory(const std::string &path) {
+  try {
+    fs::current_path(fs::path(path));
+  } catch (const fs::filesystem_error &e) {
+    std::cout << "cd: " << path << e.what() << "\n";
   }
-
-  if (fs::is_directory(newPath)) {
-    currentPath = newPath;
-    return EXIT_SUCCESS;
-  }
-  return EXIT_FAILURE;
 }
 
 std::string Paths::getPathEnv() {
