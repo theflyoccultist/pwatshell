@@ -34,9 +34,6 @@ void Shell::pwd() { std::cout << Paths::getCurrentPath().string() << "\n"; }
 void Shell::cd(std::string &command) {
   std::string userInput = str::rtrim(command);
   Paths::changeDirectory(userInput);
-  if (Paths::changeDirectory(userInput) == EXIT_FAILURE) {
-    std::cout << "cd: " << userInput << ": No such file or directory\n";
-  }
 }
 
 int Shell::executable(std::string &command) {

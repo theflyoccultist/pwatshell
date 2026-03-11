@@ -17,7 +17,7 @@ public:
   static fs::path getExecutablePath(const std::string &cmd);
   static const std::vector<std::string> pathList;
   static fs::path getCurrentPath();
-  static int changeDirectory(const std::string &path);
+  static void changeDirectory(const std::string &path);
 
 private:
   static std::string getPathEnv();
