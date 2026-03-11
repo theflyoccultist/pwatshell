@@ -32,13 +32,12 @@ fs::path Paths::getExecutablePath(const std::string &cmd) {
 const std::vector<std::string> Paths::pathList = Paths::generatePathList();
 
 void Paths::changeDirectory(const std::string &path) {
-  try {
-    fs::path newPath = fs::current_path() / path;
-    newPath = fs::weakly_canonical(newPath);
-    fs::current_path(newPath);
+  fs::path newPath = fs::path(path);
 
-  } catch (const fs::filesystem_error &e) {
-    std::cerr << "cd : " << e.what();
+  try {
+    currentPath = newPath;
+  } catch (fs::filesystem_error &e) {
+    std::cerr << "cd: " << e.what() << "\n";
   }
 }
 
