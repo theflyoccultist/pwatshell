@@ -2,12 +2,12 @@
 #include <sstream>
 
 namespace str {
-std::string ltrim(std::string &s) {
+std::string ltrim(const std::string &s) {
   unsigned long space = s.find(' ');
   return s.substr(0, space);
 }
 
-std::string rtrim(std::string &s) {
+std::string rtrim(const std::string &s) {
   unsigned long space = s.find(' ');
   return s.substr(space + 1, s.length());
 }

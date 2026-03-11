@@ -18,7 +18,9 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    switch (opts::resolveOption(str::ltrim(command))) {
+    Options opts = opts::resolveOption(str::ltrim(command));
+
+    switch (opts) {
     case Options::Echo:
       Shell::echo(command);
       break;
