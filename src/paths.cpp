@@ -32,6 +32,10 @@ const std::vector<std::string> Paths::pathList = Paths::generatePathList();
 
 int Paths::changeDirectory(const std::string &path) {
   fs::path newPath = fs::path(path);
+  if (path.starts_with("./")) {
+    newPath = fs::path(path.substr(0, 2));
+  }
+
   if (fs::is_directory(newPath)) {
     currentPath = newPath;
     return EXIT_SUCCESS;
