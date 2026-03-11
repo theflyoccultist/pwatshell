@@ -54,7 +54,7 @@ int Shell::executable(std::string &command) {
 
   if (pid == 0) {
     execvp(argv[0], argv.data());
-    std::cout << argv[0] << ": command not found";
+    std::cout << argv[0] << ": command not found\n";
     exit(EXIT_FAILURE);
   } else {
     waitpid(pid, nullptr, 0);
