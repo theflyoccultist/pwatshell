@@ -29,6 +29,7 @@ int main() {
       break;
     case Options::Pwd:
       Shell::pwd();
+      break;
     case Options::Exit:
       running = false;
       break;
