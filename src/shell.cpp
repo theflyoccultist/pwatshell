@@ -1,5 +1,6 @@
 #include "shell.hpp"
 #include "opts.hpp"
+#include "paths.hpp"
 #include "str.hpp"
 
 #include <iostream>
@@ -18,9 +19,9 @@ void Shell::type(std::string &command) {
 
   if (opts::resolveOption(userInput) != Options::Invalid) {
     std::cout << userInput << " is a shell builtin\n";
-  } else if (paths.getExecutablePath(userInput) != "") {
+  } else if (Paths::getExecutablePath(userInput) != "") {
     std::cout << userInput << " is "
-              << paths.getExecutablePath(userInput).string() << "\n";
+              << Paths::getExecutablePath(userInput).string() << "\n";
   } else {
     std::cout << userInput << ": not found\n";
   }

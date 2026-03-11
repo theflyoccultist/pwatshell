@@ -28,7 +28,7 @@ std::string Paths::getPathEnv() {
   const char *path = std::getenv("PATH");
   std::string path_str;
 
-  if (path) {
+  if (path != nullptr) {
     path_str = path;
   } else {
     path_str = "";

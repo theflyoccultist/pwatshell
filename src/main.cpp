@@ -7,8 +7,6 @@
 #include <string>
 
 int main() {
-  Paths paths;
-  Shell shell(paths);
 
   bool running = true;
 
@@ -23,16 +21,16 @@ int main() {
 
     switch (opts::resolveOption(str::ltrim(command))) {
     case Options::Echo:
-      shell.echo(command);
+      Shell::echo(command);
       break;
     case Options::Type:
-      shell.type(command);
+      Shell::type(command);
       break;
     case Options::Exit:
       running = false;
       break;
     case Options::Invalid:
-      shell.invalid(command);
+      Shell::invalid(command);
       break;
     }
   }

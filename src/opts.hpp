@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 enum class Options : uint8_t {
   Echo,
@@ -11,5 +12,17 @@ enum class Options : uint8_t {
 };
 
 namespace opts {
-Options resolveOption(std::string input);
+static Options resolveOption(const std::string &input) {
+  static const std::unordered_map<std::string, Options> optionsMap = {
+      {"echo", Options::Echo},
+      {"type", Options::Type},
+      {"exit", Options::Exit},
+  };
+
+  auto it = optionsMap.find(input);
+  if (it != optionsMap.end()) {
+    return it->second;
+  }
+  return Options::Invalid;
+}
 } // namespace opts
