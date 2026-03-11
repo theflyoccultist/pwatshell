@@ -12,10 +12,6 @@
 #include <unistd.h>
 #include <vector>
 
-void Shell::invalid(std::string &command) {
-  std::cerr << command << ": command not found\n";
-}
-
 void Shell::echo(std::string &command) {
   std::cout << str::rtrim(command) << "\n";
 }

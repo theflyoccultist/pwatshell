@@ -9,7 +9,6 @@ enum class Options : uint8_t {
   Type,
   Exit,
   Executable,
-  Invalid,
 };
 
 namespace opts {
