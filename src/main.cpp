@@ -19,19 +19,22 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
 
-    switch (opts::resolveOption(str::ltrim(command))) {
-    case Options::Echo:
-      Shell::echo(command);
-      break;
-    case Options::Type:
-      Shell::type(command);
-      break;
-    case Options::Exit:
-      running = false;
-      break;
-    case Options::Invalid:
-      Shell::invalid(command);
-      break;
+    if (Shell::executable(command) == EXIT_FAILURE) {
+
+      switch (opts::resolveOption(str::ltrim(command))) {
+      case Options::Echo:
+        Shell::echo(command);
+        break;
+      case Options::Type:
+        Shell::type(command);
+        break;
+      case Options::Exit:
+        running = false;
+        break;
+      case Options::Invalid:
+        Shell::invalid(command);
+        break;
+      }
     }
   }
 }

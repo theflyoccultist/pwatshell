@@ -3,9 +3,12 @@
 #include "paths.hpp"
 #include "str.hpp"
 
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
 
@@ -30,19 +33,31 @@ void Shell::type(std::string &command) {
   }
 }
 
-void Shell::executable(std::string &command) {
-  std::string candidate = str::ltrim(command);
-  const char *arg0 = Paths::getExecutablePath(candidate).c_str();
-
+int Shell::executable(std::string &command) {
   std::vector<std::string> args = str::splitString(command, ' ');
   std::vector<char *> argv;
 
-  argv.reserve(args.size());
+  argv.reserve(args.size() + 1);
+
   for (auto &arg : args) {
     argv.push_back(arg.data());
   }
 
-  if (strcmp(arg0, "") != 0) {
-    execvp(arg0, argv.data());
+  argv.push_back(nullptr);
+
+  pid_t pid = fork();
+
+  if (pid < 0) {
+    perror("fork failed");
+    return EXIT_FAILURE;
+  }
+
+  if (pid == 0) {
+    execvp(argv[0], argv.data());
+    perror("exec failed");
+    exit(EXIT_FAILURE);
+  } else {
+    waitpid(pid, nullptr, 0);
+    return EXIT_SUCCESS;
   }
 }
