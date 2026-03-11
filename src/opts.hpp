@@ -15,7 +15,7 @@ enum class Options : uint8_t {
 
 namespace opts {
 static Options resolveOption(const std::string &input) {
-  static std::unordered_map<std::string, Options> optionsMap = {
+  static const std::unordered_map<std::string, Options> optionsMap = {
       {"echo", Options::Echo},
       {"type", Options::Type},
       {Shell::executableCmds(input)[0], Options::Executable},
