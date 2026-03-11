@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 
-Paths::Paths() { currentPath = fs::current_path(); }
+fs::path Paths::currentPath = fs::current_path();
 
 fs::path Paths::getExecutablePath(const std::string &cmd) {
   for (const auto &dir : pathList) {
