@@ -6,6 +6,8 @@
 
 fs::path Paths::currentPath = fs::current_path();
 
+fs::path Paths::getCurrentPath() { return currentPath; }
+
 fs::path Paths::getExecutablePath(const std::string &cmd) {
   for (const auto &dir : pathList) {
     fs::path candidate = fs::path(dir) / cmd;
@@ -27,8 +29,6 @@ fs::path Paths::getExecutablePath(const std::string &cmd) {
 }
 
 const std::vector<std::string> Paths::pathList = Paths::generatePathList();
-
-fs::path Paths::getCurrentPath() { return currentPath; }
 
 int Paths::changeDirectory(const std::string &path) {
   fs::path newPath = fs::path(path);
