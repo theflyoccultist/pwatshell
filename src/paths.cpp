@@ -1,5 +1,6 @@
 #include "paths.hpp"
 #include "str.hpp"
+#include <filesystem>
 #include <string>
 
 fs::path Paths::getExecutablePath(const std::string &cmd) {
@@ -43,3 +44,5 @@ std::vector<std::string> Paths::generatePathList() {
       str::splitString(pathEnv, PATH_LIST_SEPARATOR);
   return pathList;
 }
+
+fs::path Paths::getCurrentPath() { return fs::current_path(); }

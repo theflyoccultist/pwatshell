@@ -27,6 +27,8 @@ int main() {
     case Options::Type:
       Shell::type(command);
       break;
+    case Options::Pwd:
+      Shell::pwd();
     case Options::Exit:
       running = false;
       break;

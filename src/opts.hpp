@@ -7,6 +7,7 @@
 enum class Options : uint8_t {
   Echo,
   Type,
+  Pwd,
   Exit,
   Executable,
 };
@@ -16,6 +17,7 @@ static Options resolveOption(const std::string &input) {
   static const std::unordered_map<std::string, Options> optionsMap = {
       {"echo", Options::Echo},
       {"type", Options::Type},
+      {"pwd", Options::Pwd},
       {"exit", Options::Exit},
   };
 

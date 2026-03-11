@@ -16,6 +16,7 @@ class Paths {
 public:
   static fs::path getExecutablePath(const std::string &cmd);
   static const std::vector<std::string> pathList;
+  static fs::path getCurrentPath();
 
 private:
   static std::string getPathEnv();
