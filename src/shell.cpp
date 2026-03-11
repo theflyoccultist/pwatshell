@@ -23,7 +23,7 @@ void Shell::echo(std::string &command) {
 void Shell::type(std::string &command) {
   std::string userInput = str::rtrim(command);
 
-  if (opts::resolveOption(userInput) != Options::Invalid) {
+  if (opts::resolveOption(userInput) != Options::Executable) {
     std::cout << userInput << " is a shell builtin\n";
   } else if (Paths::getExecutablePath(userInput) != "") {
     std::cout << userInput << " is "
