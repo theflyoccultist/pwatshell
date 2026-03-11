@@ -29,7 +29,7 @@ void Shell::type(std::string &command) {
   }
 }
 
-void Shell::pwd() { std::cout << Paths::getCurrentPath() << "\n"; }
+void Shell::pwd() { std::cout << Paths::getCurrentPath().string() << "\n"; }
 
 int Shell::executable(std::string &command) {
   std::vector<std::string> args = str::splitString(command, ' ');
