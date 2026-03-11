@@ -1,6 +1,5 @@
 #pragma once
 
-#include "shell.hpp"
 #include <cstdint>
 #include <string>
 #include <unordered_map>
@@ -8,8 +7,8 @@
 enum class Options : uint8_t {
   Echo,
   Type,
-  Executable,
   Exit,
+  Executable,
   Invalid,
 };
 
@@ -18,7 +17,6 @@ static Options resolveOption(const std::string &input) {
   static const std::unordered_map<std::string, Options> optionsMap = {
       {"echo", Options::Echo},
       {"type", Options::Type},
-      {Shell::executableCmds(input)[0], Options::Executable},
       {"exit", Options::Exit},
   };
 
@@ -26,6 +24,7 @@ static Options resolveOption(const std::string &input) {
   if (it != optionsMap.end()) {
     return it->second;
   }
-  return Options::Invalid;
+
+  return Options::Executable;
 }
 } // namespace opts

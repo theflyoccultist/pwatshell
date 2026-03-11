@@ -10,6 +10,7 @@
 #include <string>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vector>
 
 void Shell::invalid(std::string &command) {
   std::cerr << command << ": command not found\n";
@@ -32,7 +33,7 @@ void Shell::type(std::string &command) {
   }
 }
 
-std::vector<char *> Shell::executableCmds(const std::string &command) {
+int Shell::executable(std::string &command) {
   std::vector<std::string> args = str::splitString(command, ' ');
   std::vector<char *> argv;
 
@@ -43,12 +44,6 @@ std::vector<char *> Shell::executableCmds(const std::string &command) {
   }
 
   argv.push_back(nullptr);
-
-  return argv;
-}
-
-int Shell::executable(std::string &command) {
-  std::vector<char *> argv = executableCmds(command);
 
   pid_t pid = fork();
 

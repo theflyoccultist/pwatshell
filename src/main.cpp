@@ -33,7 +33,7 @@ int main() {
     case Options::Executable:
       Shell::executable(command);
       break;
-    case Options::Invalid:
+    default:
       Shell::invalid(command);
       break;
     }
