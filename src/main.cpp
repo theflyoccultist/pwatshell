@@ -30,6 +30,9 @@ int main() {
     case Options::Pwd:
       Shell::pwd();
       break;
+    case Options::Cd:
+      Shell::cd(command);
+      break;
     case Options::Exit:
       running = false;
       break;

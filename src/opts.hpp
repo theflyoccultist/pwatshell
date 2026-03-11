@@ -8,6 +8,7 @@ enum class Options : uint8_t {
   Echo,
   Type,
   Pwd,
+  Cd,
   Exit,
   Executable,
 };
@@ -15,10 +16,8 @@ enum class Options : uint8_t {
 namespace opts {
 static Options resolveOption(const std::string &input) {
   static const std::unordered_map<std::string, Options> optionsMap = {
-      {"echo", Options::Echo},
-      {"type", Options::Type},
-      {"pwd", Options::Pwd},
-      {"exit", Options::Exit},
+      {"echo", Options::Echo}, {"type", Options::Type}, {"pwd", Options::Pwd},
+      {"cd", Options::Cd},     {"exit", Options::Exit},
   };
 
   auto it = optionsMap.find(input);

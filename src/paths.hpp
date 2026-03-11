@@ -14,11 +14,15 @@ constexpr char PATH_LIST_SEPARATOR = ':';
 
 class Paths {
 public:
+  Paths();
+
   static fs::path getExecutablePath(const std::string &cmd);
   static const std::vector<std::string> pathList;
   static fs::path getCurrentPath();
+  static int changeDirectory(const std::string &path);
 
 private:
   static std::string getPathEnv();
   static std::vector<std::string> generatePathList();
+  static fs::path currentPath;
 };

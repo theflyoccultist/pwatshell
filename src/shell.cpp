@@ -31,6 +31,13 @@ void Shell::type(std::string &command) {
 
 void Shell::pwd() { std::cout << Paths::getCurrentPath().string() << "\n"; }
 
+void Shell::cd(std::string &command) {
+  std::string userInput = str::rtrim(command);
+  if (Paths::changeDirectory(userInput) == EXIT_FAILURE) {
+    std::cout << "cd: " << userInput << ": No such file or directory\n";
+  }
+}
+
 int Shell::executable(std::string &command) {
   std::vector<std::string> args = str::splitString(command, ' ');
   std::vector<char *> argv;
