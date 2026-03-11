@@ -14,8 +14,6 @@ constexpr char PATH_LIST_SEPARATOR = ':';
 
 class Paths {
 public:
-  Paths();
-
   static fs::path getExecutablePath(const std::string &cmd);
   static const std::vector<std::string> pathList;
   static fs::path getCurrentPath();
