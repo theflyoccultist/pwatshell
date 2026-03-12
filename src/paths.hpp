@@ -22,6 +22,7 @@ public:
 
 private:
   static std::string getPathEnv();
+
   static std::vector<std::string> generatePathList();
   fs::path currentPath;
   const std::vector<std::string> pathList;

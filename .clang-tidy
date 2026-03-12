@@ -9,4 +9,5 @@ Checks: >
   modernize-*,
   -modernize-use-trailing-return-type,
   readability-*,
+  -readability-convert-member-functions-to-static,
   -readability-identifier-length

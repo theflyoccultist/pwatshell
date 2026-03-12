@@ -12,11 +12,11 @@
 #include <unistd.h>
 #include <vector>
 
-void Shell::echo(std::string &command) const {
+void Shell::echo(std::string &command) {
   std::cout << str::rtrim(command) << "\n";
 }
 
-void Shell::type(std::string &command) const {
+void Shell::type(std::string &command) {
   std::string userInput = str::rtrim(command);
 
   if (opts::resolveOption(userInput) != Options::Executable) {
@@ -29,16 +29,14 @@ void Shell::type(std::string &command) const {
   }
 }
 
-void Shell::pwd() const {
-  std::cout << paths.getCurrentPath().string() << "\n";
-}
+void Shell::pwd() { std::cout << paths.getCurrentPath().string() << "\n"; }
 
 void Shell::cd(std::string &command) {
   std::string userInput = str::rtrim(command);
   paths.changeDirectory(userInput);
 }
 
-int Shell::executable(std::string &command) const {
+int Shell::executable(std::string &command) {
   std::vector<std::string> args = str::splitString(command, ' ');
   std::vector<char *> argv;
 

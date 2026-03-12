@@ -5,11 +5,11 @@
 
 class Shell {
 public:
-  void echo(std::string &command) const;
-  void type(std::string &command) const;
-  void pwd() const;
+  void echo(std::string &command);
+  void type(std::string &command);
+  void pwd();
   void cd(std::string &command);
-  int executable(std::string &command) const;
+  int executable(std::string &command);
 
 private:
   Paths paths;
