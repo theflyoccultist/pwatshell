@@ -14,7 +14,10 @@ constexpr char PATH_LIST_SEPARATOR = ':';
 
 class Paths {
 public:
-  Paths() : currentPath(fs::current_path()), pathList(generatePathList()) {}
+  Paths() {
+    currentPath = fs::current_path();
+    pathList = generatePathList();
+  }
 
   [[nodiscard]] fs::path getExecutablePath(const std::string &cmd) const;
   [[nodiscard]] fs::path getCurrentPath() const;
@@ -23,7 +26,8 @@ public:
 private:
   static std::string getPathEnv();
 
-  static std::vector<std::string> generatePathList();
+  std::vector<std::string> generatePathList();
+
   fs::path currentPath;
-  const std::vector<std::string> pathList;
+  std::vector<std::string> pathList;
 };
