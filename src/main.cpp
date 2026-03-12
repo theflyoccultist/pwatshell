@@ -8,6 +8,7 @@
 
 int main() {
   bool running = true;
+  Shell shell;
 
   while (running) {
     // Flush after every std::cout / std:cerr
@@ -22,22 +23,22 @@ int main() {
 
     switch (opts) {
     case Options::Echo:
-      Shell::echo(command);
+      shell.echo(command);
       break;
     case Options::Type:
-      Shell::type(command);
+      shell.type(command);
       break;
     case Options::Pwd:
-      Shell::pwd();
+      shell.pwd();
       break;
     case Options::Cd:
-      Shell::cd(command);
+      shell.cd(command);
       break;
     case Options::Exit:
       running = false;
       break;
     case Options::Executable:
-      Shell::executable(command);
+      shell.executable(command);
       break;
     }
   }

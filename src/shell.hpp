@@ -1,12 +1,16 @@
 #pragma once
 
+#include "paths.hpp"
 #include <string>
 
 class Shell {
 public:
-  static void echo(std::string &command);
-  static void type(std::string &command);
-  static void pwd();
-  static void cd(std::string &command);
-  static int executable(std::string &command);
+  void echo(std::string &command) const;
+  void type(std::string &command) const;
+  void pwd() const;
+  void cd(std::string &command);
+  int executable(std::string &command) const;
+
+private:
+  Paths paths;
 };

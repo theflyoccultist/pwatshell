@@ -12,31 +12,33 @@
 #include <unistd.h>
 #include <vector>
 
-void Shell::echo(std::string &command) {
+void Shell::echo(std::string &command) const {
   std::cout << str::rtrim(command) << "\n";
 }
 
-void Shell::type(std::string &command) {
+void Shell::type(std::string &command) const {
   std::string userInput = str::rtrim(command);
 
   if (opts::resolveOption(userInput) != Options::Executable) {
     std::cout << userInput << " is a shell builtin\n";
-  } else if (Paths::getExecutablePath(userInput) != "") {
+  } else if (paths.getExecutablePath(userInput) != "") {
     std::cout << userInput << " is "
-              << Paths::getExecutablePath(userInput).string() << "\n";
+              << paths.getExecutablePath(userInput).string() << "\n";
   } else {
     std::cout << userInput << ": not found\n";
   }
 }
 
-void Shell::pwd() { std::cout << Paths::getCurrentPath().string() << "\n"; }
+void Shell::pwd() const {
+  std::cout << paths.getCurrentPath().string() << "\n";
+}
 
 void Shell::cd(std::string &command) {
   std::string userInput = str::rtrim(command);
-  Paths::changeDirectory(userInput);
+  paths.changeDirectory(userInput);
 }
 
-int Shell::executable(std::string &command) {
+int Shell::executable(std::string &command) const {
   std::vector<std::string> args = str::splitString(command, ' ');
   std::vector<char *> argv;
 
