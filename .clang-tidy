@@ -6,8 +6,6 @@ Checks: >
   -cppcoreguidelines-avoid-const-or-ref-data-members,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   misc-*,
-  modernize-*,
-  -modernize-use-trailing-return-type,
   readability-*,
   -readability-convert-member-functions-to-static,
   -readability-identifier-length

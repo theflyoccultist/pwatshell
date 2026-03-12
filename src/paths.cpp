@@ -1,8 +1,10 @@
 #include "paths.hpp"
 #include "str.hpp"
+#include <array>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unistd.h>
 
@@ -29,9 +31,11 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
 }
 
 std::string Paths::pwd() {
-  char buffer[PATH_MAX];
-  getcwd(buffer, sizeof(buffer));
-  return std::string(buffer);
+  std::array<char, PATH_MAX> buffer{};
+  if (::getcwd(buffer.data(), buffer.size()) == nullptr) {
+    throw std::runtime_error("getcwd failed");
+  }
+  return std::string(buffer.data());
 }
 
 void Paths::changeDirectory(const std::string &path) {
