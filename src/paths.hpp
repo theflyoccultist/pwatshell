@@ -12,6 +12,8 @@ constexpr char PATH_LIST_SEPARATOR = ';';
 constexpr char PATH_LIST_SEPARATOR = ':';
 #endif
 
+constexpr size_t PATH_MAX = 1024;
+
 class Paths {
 public:
   Paths() {
@@ -20,6 +22,7 @@ public:
   }
 
   [[nodiscard]] fs::path getExecutablePath(const std::string &cmd) const;
+  std::string pwd();
   [[nodiscard]] fs::path getCurrentPath() const;
   void changeDirectory(const std::string &path);
 

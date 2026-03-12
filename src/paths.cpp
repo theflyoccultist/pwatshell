@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <unistd.h>
 
 fs::path Paths::getCurrentPath() const { return currentPath; }
 
@@ -27,12 +28,15 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
   return "";
 }
 
+std::string Paths::pwd() {
+  char buffer[PATH_MAX];
+  getcwd(buffer, sizeof(buffer));
+  return std::string(buffer);
+}
+
 void Paths::changeDirectory(const std::string &path) {
-  try {
-    fs::path newPath = fs::weakly_canonical(path);
-    currentPath = newPath;
-  } catch (const fs::filesystem_error &e) {
-    std::cerr << "cd: " << e.what() << "\n";
+  if (chdir(path.c_str()) != 0) {
+    std::cerr << "cd: " << path << ": No such file or directory\n";
   }
 }
 

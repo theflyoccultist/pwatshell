@@ -9,7 +9,6 @@
 #include <iostream>
 #include <string>
 #include <sys/wait.h>
-#include <unistd.h>
 #include <vector>
 
 void Shell::echo(std::string &command) {
@@ -29,7 +28,7 @@ void Shell::type(std::string &command) {
   }
 }
 
-void Shell::pwd() { std::cout << paths.getCurrentPath().string() << "\n"; }
+void Shell::pwd() { std::cout << paths.pwd() << "\n"; }
 
 void Shell::cd(std::string &command) {
   std::string userInput = str::rtrim(command);
