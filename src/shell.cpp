@@ -43,8 +43,7 @@ void Shell::cd(std::string &command) {
     paths.changeDirectory(userInput);
 }
 
-int Shell::executable(std::string &command) {
-    std::vector<std::string> args = str::splitString(command, ' ');
+int Shell::executable(std::vector<std::string> &args) {
     std::vector<char *> argv;
 
     argv.reserve(args.size() + 1);

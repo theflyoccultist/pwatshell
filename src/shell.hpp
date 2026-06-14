@@ -6,12 +6,12 @@
 
 class Shell {
   public:
-    void echo(const std::vector<std::string> &command);
+    void echo(const std::vector<std::string> &args);
     void cat(std::string &command);
     void type(std::string &command);
     void pwd();
     void cd(std::string &command);
-    int executable(std::string &command);
+    int executable(std::vector<std::string> &args);
 
   private:
     Paths paths;

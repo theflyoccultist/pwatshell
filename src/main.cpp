@@ -20,10 +20,10 @@ int main() {
         std::getline(std::cin, command);
 
         Options opts = opts::resolveOption(str::ltrim(command));
+        auto tokens = str::tokenize(command);
 
         switch (opts) {
         case Options::Echo: {
-            auto tokens = str::tokenize(command);
             shell.echo(tokens);
         } break;
         case Options::Type:
@@ -42,7 +42,7 @@ int main() {
             running = false;
             break;
         case Options::Executable:
-            shell.executable(command);
+            shell.executable(tokens);
             break;
         }
     }
