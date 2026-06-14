@@ -7,7 +7,7 @@
 
 namespace str {
 
-enum class State : ::uint8_t { Normal, InSingleQuotes, InDoubleQuotes };
+enum class State : ::uint8_t { Normal, Escaping, InSingleQuotes, InDoubleQuotes };
 
 std::vector<std::string> tokenize(const std::string &input) {
     std::vector<std::string> tokens;
@@ -19,7 +19,9 @@ std::vector<std::string> tokenize(const std::string &input) {
 
         switch (state) {
         case State::Normal:
-            if (c == '\'') {
+            if (c == '\\') {
+                state = State::Escaping;
+            } else if (c == '\'') {
                 state = State::InSingleQuotes;
             } else if (c == '"') {
                 state = State::InDoubleQuotes;
@@ -31,6 +33,11 @@ std::vector<std::string> tokenize(const std::string &input) {
             } else {
                 currentToken.push_back(c);
             }
+            break;
+
+        case State::Escaping:
+            currentToken.push_back(c);
+            state = State::Normal;
             break;
 
         case State::InSingleQuotes:
