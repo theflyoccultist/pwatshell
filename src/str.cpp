@@ -51,6 +51,8 @@ std::vector<std::string> tokenize(const std::string &input) {
         case State::InDoubleQuotes:
             if (c == '"') {
                 state = State::Normal;
+            } else if (c == '\\') {
+                currentToken.push_back(input[++i]);
             } else {
                 currentToken.push_back(c);
             }
