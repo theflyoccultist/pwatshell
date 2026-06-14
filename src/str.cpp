@@ -1,9 +1,68 @@
 #include "str.hpp"
 #include <cstddef>
+#include <cstdint>
+#include <iostream>
 #include <sstream>
 #include <vector>
 
 namespace str {
+
+enum class State : ::uint8_t { Normal, InSingleQuotes, InDoubleQuotes };
+
+std::vector<std::string> tokenize(const std::string &input) {
+    std::vector<std::string> tokens;
+    std::string currentToken;
+    State state = State::Normal;
+
+    for (size_t i = 0; i < input.length(); ++i) {
+        char c = input[i];
+
+        switch (state) {
+        case State::Normal:
+            if (c == '\'') {
+                state = State::InSingleQuotes;
+            } else if (c == '"') {
+                state = State::InDoubleQuotes;
+            } else if (c == ' ') {
+                if (!currentToken.empty()) {
+                    tokens.push_back(currentToken);
+                    currentToken.clear();
+                }
+            } else {
+                currentToken.push_back(c);
+            }
+            break;
+
+        case State::InSingleQuotes:
+            if (c == '\'') {
+                state = State::Normal;
+            } else {
+                currentToken.push_back(c);
+            }
+            break;
+
+        case State::InDoubleQuotes:
+            if (c == '"') {
+                state = State::Normal;
+            } else {
+                currentToken.push_back(c);
+            }
+            break;
+        }
+    }
+
+    if (!currentToken.empty()) {
+        tokens.push_back(currentToken);
+    }
+
+    if (state != State::Normal) {
+        std::cerr << "Shell error: Unterminated Quote\n";
+        return {};
+    }
+
+    return tokens;
+}
+
 std::string ltrim(const std::string &s) {
     std::size_t space = s.find(' ');
     return s.substr(0, space);

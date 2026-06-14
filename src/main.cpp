@@ -22,9 +22,10 @@ int main() {
         Options opts = opts::resolveOption(str::ltrim(command));
 
         switch (opts) {
-        case Options::Echo:
-            shell.echo(command);
-            break;
+        case Options::Echo: {
+            auto tokens = str::tokenize(command);
+            shell.echo(tokens);
+        } break;
         case Options::Type:
             shell.type(command);
             break;

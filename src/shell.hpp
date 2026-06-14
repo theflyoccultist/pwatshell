@@ -2,10 +2,11 @@
 
 #include "paths.hpp"
 #include <string>
+#include <vector>
 
 class Shell {
   public:
-    void echo(std::string &command);
+    void echo(const std::vector<std::string> &command);
     void cat(std::string &command);
     void type(std::string &command);
     void pwd();

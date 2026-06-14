@@ -3,7 +3,6 @@
 #include "paths.hpp"
 #include "str.hpp"
 
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -12,19 +11,14 @@
 #include <sys/wait.h>
 #include <vector>
 
-void Shell::echo(std::string &command) {
-    std::string trimmedCmd = str::rtrim(command);
-    const auto &split = str::splitString(trimmedCmd, '\'');
-
-    if (split.size() > 1) {
-        const std::string &concat = str::concatString(split);
-        std::cout << concat << '\n';
-    } else {
-        const auto ret =
-            std::ranges::unique(trimmedCmd, [](char a, char b) { return a == ' ' && b == ' '; });
-        trimmedCmd.erase(ret.begin(), ret.end());
-        std::cout << trimmedCmd << '\n';
+void Shell::echo(const std::vector<std::string> &args) {
+    for (size_t i = 1; i < args.size(); ++i) {
+        std::cout << args[i];
+        if (i + 1 < args.size()) {
+            std::cout << " ";
+        }
     }
+    std::cout << "\n";
 }
 
 void Shell::cat(std::string &command) { ::system(command.c_str()); }
