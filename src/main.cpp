@@ -34,6 +34,9 @@ int main() {
         case Options::Cd:
             shell.cd(command);
             break;
+        case Options::Cat:
+            shell.cat(command);
+            break;
         case Options::Exit:
             running = false;
             break;

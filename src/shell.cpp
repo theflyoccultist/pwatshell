@@ -3,6 +3,7 @@
 #include "paths.hpp"
 #include "str.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -11,12 +12,28 @@
 #include <sys/wait.h>
 #include <vector>
 
-void Shell::echo(std::string &command) { std::cout << str::rtrim(command) << "\n"; }
+void Shell::echo(std::string &command) {
+    std::string trimmedCmd = str::rtrim(command);
+    const auto &split = str::splitString(trimmedCmd, '\'');
+
+    if (split.size() > 1) {
+        const std::string &concat = str::concatString(split);
+        std::cout << concat << '\n';
+    } else {
+        const auto ret =
+            std::ranges::unique(trimmedCmd, [](char a, char b) { return a == ' ' && b == ' '; });
+        trimmedCmd.erase(ret.begin(), ret.end());
+        std::cout << trimmedCmd << '\n';
+    }
+}
+
+void Shell::cat(std::string &command) { ::system(command.c_str()); }
 
 void Shell::type(std::string &command) {
     std::string userInput = str::rtrim(command);
 
-    if (opts::resolveOption(userInput) != Options::Executable) {
+    if (opts::resolveOption(userInput) != Options::Executable &&
+        opts::resolveOption(userInput) != Options::Cat) {
         std::cout << userInput << " is a shell builtin\n";
     } else if (paths.getExecutablePath(userInput) != "") {
         std::cout << userInput << " is " << paths.getExecutablePath(userInput).string() << "\n";
