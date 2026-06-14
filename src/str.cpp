@@ -3,25 +3,25 @@
 
 namespace str {
 std::string ltrim(const std::string &s) {
-  unsigned long space = s.find(' ');
-  return s.substr(0, space);
+    unsigned long space = s.find(' ');
+    return s.substr(0, space);
 }
 
 std::string rtrim(const std::string &s) {
-  unsigned long space = s.find(' ');
-  return s.substr(space + 1, s.length());
+    unsigned long space = s.find(' ');
+    return s.substr(space + 1, s.length());
 }
 
 std::vector<std::string> splitString(const std::string &input, char delimiter) {
-  std::vector<std::string> dirs;
-  std::stringstream ss(input);
-  std::string item;
+    std::vector<std::string> dirs;
+    std::stringstream ss(input);
+    std::string item;
 
-  while (std::getline(ss, item, delimiter)) {
-    dirs.push_back(item);
-  }
+    while (std::getline(ss, item, delimiter)) {
+        dirs.push_back(item);
+    }
 
-  return dirs;
+    return dirs;
 }
 
 } // namespace str

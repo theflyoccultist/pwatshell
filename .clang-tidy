@@ -2,10 +2,5 @@ Checks: >
   bugprone-*,
   performance-*,
   cppcoreguidelines-*,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
-  -cppcoreguidelines-avoid-const-or-ref-data-members,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  misc-*,
-  readability-*,
-  -readability-convert-member-functions-to-static,
-  -readability-identifier-length
+  modernize-*,
+  -modernize-use-trailing-return-type,

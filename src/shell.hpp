@@ -4,13 +4,13 @@
 #include <string>
 
 class Shell {
-public:
-  void echo(std::string &command);
-  void type(std::string &command);
-  void pwd();
-  void cd(std::string &command);
-  int executable(std::string &command);
+  public:
+    void echo(std::string &command);
+    void type(std::string &command);
+    void pwd();
+    void cd(std::string &command);
+    int executable(std::string &command);
 
-private:
-  Paths paths;
+  private:
+    Paths paths;
 };

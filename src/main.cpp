@@ -7,39 +7,39 @@
 #include <string>
 
 int main() {
-  bool running = true;
-  Shell shell;
+    bool running = true;
+    Shell shell;
 
-  while (running) {
-    // Flush after every std::cout / std:cerr
-    std::cout << std::unitbuf;
-    std::cerr << std::unitbuf;
+    while (running) {
+        // Flush after every std::cout / std:cerr
+        std::cout << std::unitbuf;
+        std::cerr << std::unitbuf;
 
-    std::cout << "$ ";
-    std::string command;
-    std::getline(std::cin, command);
+        std::cout << "$ ";
+        std::string command;
+        std::getline(std::cin, command);
 
-    Options opts = opts::resolveOption(str::ltrim(command));
+        Options opts = opts::resolveOption(str::ltrim(command));
 
-    switch (opts) {
-    case Options::Echo:
-      shell.echo(command);
-      break;
-    case Options::Type:
-      shell.type(command);
-      break;
-    case Options::Pwd:
-      shell.pwd();
-      break;
-    case Options::Cd:
-      shell.cd(command);
-      break;
-    case Options::Exit:
-      running = false;
-      break;
-    case Options::Executable:
-      shell.executable(command);
-      break;
+        switch (opts) {
+        case Options::Echo:
+            shell.echo(command);
+            break;
+        case Options::Type:
+            shell.type(command);
+            break;
+        case Options::Pwd:
+            shell.pwd();
+            break;
+        case Options::Cd:
+            shell.cd(command);
+            break;
+        case Options::Exit:
+            running = false;
+            break;
+        case Options::Executable:
+            shell.executable(command);
+            break;
+        }
     }
-  }
 }
