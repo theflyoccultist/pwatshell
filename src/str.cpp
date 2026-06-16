@@ -7,7 +7,7 @@
 
 namespace str {
 
-enum class State : ::uint8_t { Normal, Escaping, InSingleQuotes, InDoubleQuotes };
+enum class State : ::uint8_t { Normal, Escaping, InSingleQuotes, InDoubleQuotes, Redirect };
 
 std::vector<std::string> tokenize(const std::string &input) {
     std::vector<std::string> tokens;
@@ -25,6 +25,9 @@ std::vector<std::string> tokenize(const std::string &input) {
                 state = State::InSingleQuotes;
             } else if (c == '"') {
                 state = State::InDoubleQuotes;
+            } else if (c == '>') {
+                currentToken.push_back(c);
+                state = State::Redirect;
             } else if (c == ' ') {
                 if (!currentToken.empty()) {
                     tokens.push_back(currentToken);
@@ -56,6 +59,15 @@ std::vector<std::string> tokenize(const std::string &input) {
             } else {
                 currentToken.push_back(c);
             }
+            break;
+
+        case State::Redirect:
+            if (input[i] == '>') {
+                currentToken.push_back(c);
+            }
+            tokens.push_back(currentToken);
+            currentToken.clear();
+            state = State::Normal;
             break;
         }
     }
@@ -94,11 +106,11 @@ std::vector<std::string> splitString(const std::string &input, char delimiter) {
     return dirs;
 }
 
-std::string concatString(const std::vector<std::string> &vecStr) {
+std::string concatString(const std::vector<std::string> &vecStr, char delimiter) {
     std::string concat;
 
     for (auto &str : vecStr) {
-        concat += str;
+        concat += (delimiter + str);
     }
 
     return concat;

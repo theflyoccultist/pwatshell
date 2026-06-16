@@ -16,7 +16,7 @@ void redirect(const RedirectInfo &info,
     }
 
     // should create file if it doesn't exist, overwrite if it exists
-    int oflag = O_WRONLY | O_CREAT | (info.append ? O_APPEND : O_TRUNC);
+    int oflag = O_WRONLY | O_CREAT | (info.isAppend ? O_APPEND : O_TRUNC);
     mode_t perms = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     int file_fd = open(info.filename.c_str(), oflag, perms);
 
