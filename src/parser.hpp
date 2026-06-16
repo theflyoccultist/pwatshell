@@ -30,8 +30,8 @@ PipelinePlan parse(const std::vector<std::string> &tokens) {
             if (i + 1 < tokens.size()) {
                 plan.hasRedirect = true;
                 plan.redirectFilename = tokens[i + 1];
-                plan.isAppend = (token == ">>") || (token == "1>>");
-                plan.targetFd = (token == "2>") ? 2 : 1;
+                plan.isAppend = (token == ">>") || (token == "1>>") || (token == "2>>");
+                plan.targetFd = (token == "2>") || (token == "2>>") ? 2 : 1;
 
                 // Skip the next token, since we just consumed it as the filename
                 i++;
