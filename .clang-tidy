@@ -2,5 +2,6 @@ Checks: >
   bugprone-*,
   performance-*,
   cppcoreguidelines-*,
+  -cppcoreguidelines-pro-type-vararg,
   modernize-*,
   -modernize-use-trailing-return-type,
