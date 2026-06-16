@@ -70,7 +70,7 @@ void Shell::type(const std::vector<std::string> &args) {
     if (opts::resolveOption(args[1]) != Options::Executable) {
         std::cout << args[1] << " is a shell builtin\n";
     } else if (paths.getExecutablePath(args[1]) != "") {
-        std::cout << args[1] << " is " << paths.getExecutablePath(args[1]) << "\n";
+        std::cout << args[1] << " is " << paths.getExecutablePath(args[1]).string() << "\n";
     } else {
         std::cout << args[1] << ": not found\n";
     }
