@@ -3,9 +3,12 @@
 #include "pipeline.hpp"
 #include <iostream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace Parser {
+
+const std::unordered_set<std::string> redirects = {">", "1>", "2>", ">>", "1>>", "2>>"};
 
 PipelinePlan parse(const std::vector<std::string> &tokens) {
     PipelinePlan plan;
@@ -22,12 +25,12 @@ PipelinePlan parse(const std::vector<std::string> &tokens) {
             }
         }
 
-        else if (token == ">" || token == ">>" || token == "1>" || token == "2>") {
+        else if (redirects.find(token) != redirects.end()) {
             // the next token must be the filename
             if (i + 1 < tokens.size()) {
                 plan.hasRedirect = true;
                 plan.redirectFilename = tokens[i + 1];
-                plan.isAppend = (token == ">>");
+                plan.isAppend = (token == ">>") || (token == "1>>");
                 plan.targetFd = (token == "2>") ? 2 : 1;
 
                 // Skip the next token, since we just consumed it as the filename
