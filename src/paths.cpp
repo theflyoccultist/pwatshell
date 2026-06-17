@@ -32,20 +32,20 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
 }
 
 std::vector<std::string> Paths::getExecutablesInPathEnv() {
-    const std::vector<std::string> &executableList = this->generatePathList();
-    std::vector<std::string> paths;
+    const std::vector<std::string> &pathList = this->generatePathList();
+    std::vector<std::string> executableList;
 
-    for (auto &pathEnv : executableList) {
+    for (auto &pathEnv : pathList) {
         for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {
             fs::file_status fileStatus = fs::status(dir_entry.path());
 
             if (fs::exists(fileStatus) &&
                 (fileStatus.permissions() & fs::perms::owner_exec) != fs::perms::none)
-                paths.emplace_back(dir_entry.path().filename().string());
+                executableList.emplace_back(dir_entry.path().filename().string());
         }
     }
 
-    return paths;
+    return executableList;
 }
 
 std::string Paths::pwd() {

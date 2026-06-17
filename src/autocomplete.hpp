@@ -8,9 +8,7 @@ class AutoComplete {
   public:
     AutoComplete();
 
-    [[nodiscard]] std::vector<std::string> match(const std::string &usrInput) const {
-        return trie.getSuggestions(usrInput);
-    }
+    [[nodiscard]] std::vector<std::string> match(const std::string &usrInput) const;
 
   private:
     BasicTrie<char> trie;

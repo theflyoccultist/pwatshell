@@ -1,4 +1,6 @@
 #include "paths.hpp"
+#include <algorithm>
+#include <iterator>
 #include <vector>
 #include "autocomplete.hpp"
 
@@ -10,13 +12,15 @@ AutoComplete::AutoComplete() {
     }
 }
 
+std::vector<std::string> AutoComplete::match(const std::string &usrInput) const {
+    return trie.getSuggestions(usrInput);
+}
+
 void AutoComplete::initExecutableList() {
     executableList = {"echo", "type", "pwd", "cd", "exit"};
     Paths paths;
 
     const std::vector<std::string> &execPaths = paths.getExecutablesInPathEnv();
 
-    for (auto &path : execPaths) {
-        executableList.push_back(path);
-    }
+    std::ranges::move(execPaths, std::back_inserter(executableList));
 }
