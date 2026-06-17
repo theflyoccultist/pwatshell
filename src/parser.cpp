@@ -42,17 +42,23 @@ std::string parseUsrInput() {
         } else if (c == '\t') {
             auto match = autocomplete.match(usrInput);
 
-            if (!usrInput.empty() && match.size() == 1) {
-                // clear the current line
-                std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-                usrInput.clear();
-                for (const std::string &str : match) {
-                    for (const char &c : str) {
-                        usrInput.push_back(c);
-                        std::cout << c << std::flush;
+            if (!usrInput.empty()) {
+                if (match.size() == 1) {
+                    // clear the current line
+                    std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
+                    usrInput.clear();
+
+                    for (const std::string &str : match) {
+                        for (const char &c : str) {
+                            usrInput.push_back(c);
+                            std::cout << c << std::flush;
+                        }
+                        std::cout << ' ' << std::flush;
+                        usrInput.push_back(' ');
                     }
-                    std::cout << ' ' << std::flush;
-                    usrInput.push_back(' ');
+                } else if (match.empty()) {
+                    // it is the bell character.
+                    std::cout << "\x07" << std::flush;
                 }
             }
             continue;
