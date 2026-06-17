@@ -7,10 +7,6 @@
 
 namespace Parser {
 
-template <class... Ts> struct overloaded : Ts... {
-    using Ts::operator()...;
-};
-
 constexpr size_t MAX_LINE_LEN = 4096;
 constexpr char BACKSPACE = 127;
 
@@ -47,6 +43,7 @@ std::string parseUsrInput() {
             auto match = autocomplete.match(usrInput);
 
             if (!usrInput.empty() && match.size() == 1) {
+                // clear the current line
                 std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
                 usrInput.clear();
                 for (const std::string &str : match) {

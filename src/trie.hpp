@@ -14,32 +14,6 @@ template <typename CharType = char> class BasicTrie {
 
     std::unique_ptr<TrieNode> root;
 
-    bool deleteHelper(TrieNode *node, const std::basic_string<CharType> &word, int index) const {
-        if (index == word.length()) {
-            if (!node->isEndOfWord) {
-                return false;
-            }
-
-            node->isEndOfWord = false;
-            return node->children.empty();
-        }
-
-        CharType ch = word[index];
-        if (node->children.find(ch) == node->children.end()) {
-            return false;
-        }
-
-        TrieNode *child = node->children[ch].get();
-        bool shouldDeleteChild = deleteHelper(child, word, index + 1);
-
-        if (shouldDeleteChild) {
-            node->children.erase(ch);
-            return node->children.empty();
-        }
-
-        return false;
-    }
-
     const TrieNode *findPrefixNode(const std::basic_string<CharType> &prefix) const {
         const TrieNode *current = root.get();
 
@@ -83,14 +57,6 @@ template <typename CharType = char> class BasicTrie {
             current = current->children[ch].get();
         }
         current->isEndOfWord = true;
-    }
-
-    bool deleteWord(const std::basic_string<CharType> &word) const {
-        return deleteHelper(root.get(), word, 0);
-    }
-
-    bool startsWith(const std::basic_string<CharType> &prefix) const {
-        return findPrefixNode(prefix) != nullptr;
     }
 
     std::vector<std::basic_string<CharType>>
