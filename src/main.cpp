@@ -16,10 +16,10 @@ int main() {
     std::cerr << std::unitbuf;
 
     while (running) {
-
         std::cout << "$ ";
-        std::string inputLine;
-        std::getline(std::cin, inputLine);
+        std::string inputLine = Parser::parseUsrInput();
+        if (inputLine.empty())
+            continue;
 
         auto tokens = str::tokenize(inputLine);
 
