@@ -1,14 +1,12 @@
+#pragma once
+
 #include "trie.hpp"
 #include <string>
 #include <vector>
 
 class AutoComplete {
   public:
-    AutoComplete() {
-        for (auto cmd : {"echo", "type", "pwd", "cd", "exit"}) {
-            trie.insertWord(cmd);
-        }
-    }
+    AutoComplete();
 
     [[nodiscard]] std::vector<std::string> match(const std::string &usrInput) const {
         return trie.getSuggestions(usrInput);
@@ -16,4 +14,6 @@ class AutoComplete {
 
   private:
     BasicTrie<char> trie;
+    std::vector<std::string> executableList;
+    void initExecutableList();
 };

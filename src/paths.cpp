@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <unistd.h>
+#include <vector>
 
 fs::path Paths::getCurrentPath() const { return currentPath; }
 
@@ -28,6 +29,23 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
     }
 
     return "";
+}
+
+std::vector<std::string> Paths::getExecutablesInPathEnv() {
+    const std::vector<std::string> &executableList = this->generatePathList();
+    std::vector<std::string> paths;
+
+    for (auto &pathEnv : executableList) {
+        for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {
+            fs::file_status fileStatus = fs::status(dir_entry.path());
+
+            if (fs::exists(fileStatus) &&
+                (fileStatus.permissions() & fs::perms::owner_exec) != fs::perms::none)
+                paths.emplace_back(dir_entry.path().filename().string());
+        }
+    }
+
+    return paths;
 }
 
 std::string Paths::pwd() {

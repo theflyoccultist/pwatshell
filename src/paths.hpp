@@ -15,6 +15,7 @@ class Paths {
 
     [[nodiscard]] fs::path getCurrentPath() const;
     [[nodiscard]] fs::path getExecutablePath(const std::string &cmd) const;
+    [[nodiscard]] std::vector<std::string> getExecutablesInPathEnv();
 
     std::string pwd();
     void changeDirectory(std::string path);
