@@ -45,6 +45,10 @@ std::string parseUsrInput() {
             tabCount++;
             auto match = autocomplete.match(usrInput);
 
+            if (match.empty() || usrInput.empty()) {
+                std::cout << "\x07" << std::flush;
+            }
+
             if (!usrInput.empty()) {
                 if (match.size() == 1) {
                     // clear the current line
@@ -77,6 +81,7 @@ std::string parseUsrInput() {
                     continue;
                 }
             }
+
             continue;
         }
 
