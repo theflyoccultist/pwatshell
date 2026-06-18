@@ -50,6 +50,7 @@ std::string parseUsrInput() {
             }
 
             if (!usrInput.empty()) {
+                // single completion
                 if (tabCount == 1 && match.size() == 1) {
                     // clear the current line
                     std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
@@ -63,11 +64,26 @@ std::string parseUsrInput() {
                         std::cout << ' ' << std::flush;
                         usrInput.push_back(' ');
                     }
-                } else if (tabCount == 1 && match.size() > 1) {
-                    // it is the bell character.
-                    std::cout << "\x07" << std::flush;
                 }
 
+                // partial completion
+                if (tabCount == 1 && match.size() > 1) {
+                    std::string lcp = autocomplete.lcp(match);
+
+                    if (lcp.length() > usrInput.length()) {
+                        tabCount = 0;
+                        std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
+                        usrInput = lcp;
+                        std::cout << usrInput << std::flush;
+                    } else {
+                        //   it is the bell character.
+                        std::cout << "\x07" << std::flush;
+                    }
+
+                    continue;
+                }
+
+                // multiple completions
                 if (tabCount == 2 && match.size() > 1) {
                     tabCount = 0;
                     std::cout << "\r\n";
@@ -81,7 +97,6 @@ std::string parseUsrInput() {
                     continue;
                 }
             }
-
             continue;
         }
 
