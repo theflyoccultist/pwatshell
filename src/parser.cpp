@@ -50,7 +50,7 @@ std::string parseUsrInput() {
             }
 
             if (!usrInput.empty()) {
-                if (match.size() == 1) {
+                if (tabCount == 1 && match.size() == 1) {
                     // clear the current line
                     std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
                     usrInput.clear();
