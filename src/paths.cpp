@@ -32,7 +32,6 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
 }
 
 std::vector<std::string> Paths::getExecutablesInPathEnv() {
-    const std::vector<std::string> &pathList = this->generatePathList();
     std::vector<std::string> executableList;
 
     for (auto &pathEnv : pathList) {
@@ -58,7 +57,7 @@ std::string Paths::pwd() {
 
 void Paths::changeDirectory(std::string path) {
     if (!path.empty() && path[0] == '~') {
-        std::string homeEnv = getPathHome();
+        std::string homeEnv = this->getPathHome();
 
         if (path.length() == 1) {
             path = homeEnv;

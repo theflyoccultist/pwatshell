@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 template <typename CharType = char> class BasicTrie {
   private:
@@ -73,6 +74,7 @@ template <typename CharType = char> class BasicTrie {
         // Gather all words stemming from this node
         collectWordsHelper(prefixNode, prefix, results);
 
+        std::ranges::sort(results);
         return results;
     }
 };

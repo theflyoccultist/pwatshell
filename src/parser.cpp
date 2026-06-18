@@ -1,4 +1,5 @@
 #include "parser.hpp"
+#include <string>
 #include <unistd.h>
 #include <unordered_set>
 #include <iostream>
@@ -30,6 +31,7 @@ std::string parseUsrInput() {
     tcsetattr(STDIN_FILENO, TCSANOW, &term_raw);
 
     char c{};
+    int tabCount = 0;
     while (true) {
         ssize_t bytesRead = read(STDIN_FILENO, &c, 1);
         if (bytesRead <= 0)
@@ -40,6 +42,7 @@ std::string parseUsrInput() {
             std::cout << "\r\n";
             break;
         } else if (c == '\t') {
+            tabCount++;
             auto match = autocomplete.match(usrInput);
 
             if (!usrInput.empty()) {
@@ -56,13 +59,28 @@ std::string parseUsrInput() {
                         std::cout << ' ' << std::flush;
                         usrInput.push_back(' ');
                     }
-                } else if (match.empty()) {
+                } else if (tabCount == 1 && match.size() > 1) {
                     // it is the bell character.
                     std::cout << "\x07" << std::flush;
                 }
+
+                if (tabCount == 2 && match.size() > 1) {
+                    tabCount = 0;
+                    std::cout << "\r\n";
+
+                    for (const std::string &str : match) {
+                        std::cout << str << "  ";
+                    }
+
+                    std::cout << "\r\n$ " << usrInput << std::flush;
+
+                    continue;
+                }
             }
             continue;
-        } else if (c == BACKSPACE) {
+        }
+
+        else if (c == BACKSPACE) {
             if (!usrInput.empty()) {
                 usrInput.pop_back();
                 std::cout << "\b \b" << std::flush;
