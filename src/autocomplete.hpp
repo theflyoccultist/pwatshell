@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fileinfo.hpp"
 #include "trie.hpp"
 #include "paths.hpp"
 #include <string>
@@ -9,14 +10,14 @@ class AutoComplete {
   public:
     AutoComplete();
 
-    [[nodiscard]] std::vector<std::string> match(const std::string &usrInput) const;
-    [[nodiscard]] std::string lcp(const std::vector<std::string> &words) const;
-    [[nodiscard]] std::vector<std::string> matchFilesInDirectory(const std::string &usrInput) const;
+    [[nodiscard]] std::vector<FileInfo> match(const std::string &usrInput) const;
+    [[nodiscard]] std::string lcp(const std::vector<FileInfo> &words) const;
+    [[nodiscard]] std::vector<FileInfo> matchFilesInDirectory(const std::string &usrInput) const;
 
   private:
-    BasicTrie<char> trieForExecutables;
-    BasicTrie<char> trieForFiles;
-    std::vector<std::string> executableList;
+    std::vector<FileInfo> executableList;
+    BasicTrie trieForExecutables;
+    BasicTrie trieForFiles;
 
     void initExecutableList();
 

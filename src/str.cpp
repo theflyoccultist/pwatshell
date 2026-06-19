@@ -1,8 +1,8 @@
 #include "str.hpp"
 #include <cstddef>
 #include <cstdint>
-#include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <vector>
 
 namespace str {
@@ -77,8 +77,7 @@ std::vector<std::string> tokenize(const std::string &input) {
     }
 
     if (state != State::Normal) {
-        std::cerr << "Shell error: Unterminated Quote\n";
-        return {};
+        throw std::runtime_error("unterminated quote");
     }
 
     return tokens;

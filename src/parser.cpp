@@ -4,7 +4,9 @@
 #include <unordered_set>
 #include <iostream>
 #include <termios.h>
+#include <vector>
 #include "autocomplete.hpp"
+#include "str.hpp"
 
 namespace Parser {
 
@@ -43,6 +45,7 @@ std::string parseUsrInput() {
             break;
         } else if (c == '\t') {
             tabCount++;
+            // executable completion
             auto match = autocomplete.match(usrInput);
 
             if (match.empty() || usrInput.empty()) {
@@ -58,7 +61,7 @@ std::string parseUsrInput() {
                     std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
                     usrInput.clear();
 
-                    for (char i : match[0]) {
+                    for (char i : match[0].filename) {
                         usrInput.push_back(i);
                         std::cout << i << std::flush;
                     }
@@ -89,7 +92,7 @@ std::string parseUsrInput() {
                     tabCount = 0;
                     std::cout << "\r\n";
 
-                    for (const std::string &str : match) {
+                    for (const auto &[str, _] : match) {
                         std::cout << str << "  ";
                     }
 
@@ -99,26 +102,53 @@ std::string parseUsrInput() {
                 }
 
                 // filename completion
-                if (usrInput.find_last_of(' ') != usrInput.length() - 1) {
-                    std::string argument =
-                        usrInput.substr(usrInput.find_last_of(' ') + 1, usrInput.length() - 1);
-                    auto fileMatches = autocomplete.matchFilesInDirectory(argument);
+                auto tokens = str::tokenize(usrInput);
+                std::string argument = "";
 
-                    // single completion (file)
-                    if (fileMatches.size() == 1) {
-                        std::cout << "\033[" << argument.length() << "D\033[K" << std::flush;
-                        usrInput.resize(usrInput.rfind(argument));
+                bool endsWithSpace = (!usrInput.empty() && usrInput.back() == ' ');
 
-                        for (char i : fileMatches[0]) {
-                            usrInput.push_back(i);
-                            std::cout << i << std::flush;
-                        }
-                        std::cout << ' ' << std::flush;
-                        usrInput.push_back(' ');
-                    }
+                if (endsWithSpace) {
+                    argument = "";
+                } else if (!tokens.empty()) {
+                    argument = tokens.back();
+                }
+                auto fileMatches = autocomplete.matchFilesInDirectory(argument);
 
+                if (fileMatches.empty()) {
+                    std::cout << "\x07" << std::flush;
                     continue;
                 }
+
+                if (fileMatches.size() == 1) {
+                    const auto &candidate = fileMatches[0];
+
+                    // single completion (file or directory)
+                    if (!argument.empty()) {
+                        std::cout << "\033[" << argument.length() << "D\033[K" << std::flush;
+
+                        size_t index = usrInput.rfind(argument);
+                        if (index != std::string::npos) {
+                            usrInput.resize(index);
+                        }
+                    }
+
+                    for (char i : candidate.filename) {
+                        usrInput.push_back(i);
+                        std::cout << i << std::flush;
+                    }
+
+                    if (!candidate.isDirectory) {
+                        std::cout << ' ' << std::flush;
+                        usrInput.push_back(' ');
+                    } else {
+                        std::cout << '/' << std::flush;
+                        usrInput.push_back('/');
+                    }
+                } else {
+                    // multiple choices logic do do
+                }
+
+                continue;
             }
             continue;
         }

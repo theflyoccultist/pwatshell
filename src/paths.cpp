@@ -1,6 +1,8 @@
 #include "paths.hpp"
+#include "fileinfo.hpp"
 #include "str.hpp"
 #include <array>
+#include <cstddef>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -35,14 +37,14 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
     return "";
 }
 
-std::vector<std::string> Paths::getExecutablesInPathEnv() const {
-    std::vector<std::string> executableList;
+std::vector<FileInfo> Paths::getExecutablesInPathEnv() const {
+    std::vector<FileInfo> executableList;
 
     for (auto &pathEnv : pathList) {
         for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {
             const fs::path &candidate = dir_entry.path();
             if (this->isExecutable(candidate)) {
-                executableList.emplace_back(candidate.filename().string());
+                executableList.emplace_back(candidate.filename().string(), false);
             }
         }
     }
@@ -50,16 +52,20 @@ std::vector<std::string> Paths::getExecutablesInPathEnv() const {
     return executableList;
 }
 
-std::vector<std::string> Paths::getFilesInCurrPath() const {
-    std::vector<std::string> fileList;
+std::vector<FileInfo> Paths::getFilesInCurrPath() const {
+    std::vector<FileInfo> fileList;
     const std::string &pwd = this->pwd();
 
-    for (auto const &dir_entry : fs::recursive_directory_iterator{pwd}) {
+    for (auto const &dir_entry : fs::directory_iterator{pwd}) {
         const fs::path &candidate = dir_entry.path();
         if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
             std::string file = candidate.string();
             str::eraseCommonSubString(file, pwd + '/');
-            fileList.emplace_back(file);
+            fileList.emplace_back(file, false);
+        } else if (fs::is_directory(candidate)) {
+            std::string dir = candidate.string();
+            str::eraseCommonSubString(dir, pwd + '/');
+            fileList.emplace_back(dir, true);
         }
     }
 

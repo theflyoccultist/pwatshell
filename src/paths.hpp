@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include "fileinfo.hpp"
 
 namespace fs = std::filesystem;
 
@@ -11,8 +12,8 @@ class Paths {
     Paths() : pathList(generatePathList()) {}
 
     [[nodiscard]] fs::path getExecutablePath(const std::string &cmd) const;
-    [[nodiscard]] std::vector<std::string> getExecutablesInPathEnv() const;
-    [[nodiscard]] std::vector<std::string> getFilesInCurrPath() const;
+    [[nodiscard]] std::vector<FileInfo> getExecutablesInPathEnv() const;
+    [[nodiscard]] std::vector<FileInfo> getFilesInCurrPath() const;
 
     [[nodiscard]] std::string pwd() const;
     void changeDirectory(std::string path);
