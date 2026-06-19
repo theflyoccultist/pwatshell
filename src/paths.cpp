@@ -11,8 +11,6 @@
 constexpr char PATH_LIST_SEPARATOR = ':';
 constexpr size_t PATH_MAX = 1024;
 
-fs::path Paths::getCurrentPath() const { return currentPath; }
-
 bool Paths::isExecutable(const fs::path &candidate) const {
     if (fs::exists(candidate)) {
         auto perms = fs::status(candidate).permissions();
@@ -40,7 +38,7 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
 std::vector<std::string> Paths::getExecutablesInPathEnv() const {
     std::vector<std::string> executableList;
 
-    for (size_t i = 0; auto &pathEnv : pathList) {
+    for (auto &pathEnv : pathList) {
         for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {
             const fs::path &candidate = dir_entry.path();
             if (this->isExecutable(candidate)) {
@@ -54,18 +52,21 @@ std::vector<std::string> Paths::getExecutablesInPathEnv() const {
 
 std::vector<std::string> Paths::getFilesInCurrPath() const {
     std::vector<std::string> fileList;
+    const std::string &pwd = this->pwd();
 
-    for (auto const &dir_entry : fs::directory_iterator{currentPath}) {
+    for (auto const &dir_entry : fs::recursive_directory_iterator{pwd}) {
         const fs::path &candidate = dir_entry.path();
         if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
-            fileList.emplace_back(candidate.filename().string());
+            std::string file = candidate.string();
+            str::eraseCommonSubString(file, pwd + '/');
+            fileList.emplace_back(file);
         }
     }
 
     return fileList;
 }
 
-std::string Paths::pwd() {
+std::string Paths::pwd() const {
     std::array<char, PATH_MAX> buffer{};
     if (::getcwd(buffer.data(), buffer.size()) == nullptr) {
         throw std::runtime_error("getcwd failed");
@@ -86,6 +87,7 @@ void Paths::changeDirectory(std::string path) {
 
     if (::chdir(path.c_str()) != 0) {
         std::cerr << "cd: " << path << ": No such file or directory\n";
+        return;
     }
 }
 

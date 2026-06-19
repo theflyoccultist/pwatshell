@@ -84,16 +84,6 @@ std::vector<std::string> tokenize(const std::string &input) {
     return tokens;
 }
 
-std::string ltrim(const std::string &s) {
-    std::size_t space = s.find(' ');
-    return s.substr(0, space);
-}
-
-std::string rtrim(const std::string &s) {
-    std::size_t space = s.find(' ');
-    return s.substr(space + 1, s.length());
-}
-
 std::vector<std::string> splitString(const std::string &input, char delimiter) {
     std::vector<std::string> dirs;
     std::stringstream ss(input);
@@ -106,14 +96,11 @@ std::vector<std::string> splitString(const std::string &input, char delimiter) {
     return dirs;
 }
 
-std::string concatString(const std::vector<std::string> &vecStr, char delimiter) {
-    std::string concat;
-
-    for (auto &str : vecStr) {
-        concat += (delimiter + str);
+void eraseCommonSubString(std::string &mainStr, const std::string &subStr) {
+    size_t pos = mainStr.find(subStr);
+    if (pos != std::string::npos) {
+        mainStr.erase(pos, subStr.length());
     }
-
-    return concat;
 }
 
 } // namespace str
