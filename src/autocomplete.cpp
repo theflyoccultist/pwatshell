@@ -1,4 +1,3 @@
-#include "paths.hpp"
 #include <algorithm>
 #include <iterator>
 #include <vector>
@@ -7,13 +6,13 @@
 AutoComplete::AutoComplete() {
     this->initExecutableList();
 
-    for (const auto &cmd : executableList) {
-        trie.insertWord(cmd);
+    for (const auto &exe : executableList) {
+        trieForExecutables.insertWord(exe);
     }
 }
 
 std::vector<std::string> AutoComplete::match(const std::string &usrInput) const {
-    return trie.getSuggestions(usrInput);
+    return trieForExecutables.getSuggestions(usrInput);
 }
 
 std::string AutoComplete::lcp(const std::vector<std::string> &words) const {
@@ -37,11 +36,20 @@ std::string AutoComplete::lcp(const std::vector<std::string> &words) const {
     return words[0];
 }
 
+std::vector<std::string> AutoComplete::matchFilesInDirectory(const std::string &usrInput) const {
+    const std::vector<std::string> &fileNames = paths.getFilesInCurrPath();
+
+    for (const auto &file : fileNames) {
+        trieForFiles.insertWord(file);
+    }
+
+    return trieForFiles.getSuggestions(usrInput);
+}
+
 void AutoComplete::initExecutableList() {
     executableList = {"echo", "type", "pwd", "cd", "exit"};
-    Paths paths;
 
-    const std::vector<std::string> &execPaths = paths.getExecutablesInPathEnv();
+    const std::vector<std::string> &execNames = paths.getExecutablesInPathEnv();
 
-    std::ranges::move(execPaths, std::back_inserter(executableList));
+    std::ranges::move(execNames, std::back_inserter(executableList));
 }

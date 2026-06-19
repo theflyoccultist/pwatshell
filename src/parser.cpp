@@ -46,27 +46,29 @@ std::string parseUsrInput() {
             auto match = autocomplete.match(usrInput);
 
             if (match.empty() || usrInput.empty()) {
+                tabCount = 0;
+                //   it is the bell character.
                 std::cout << "\x07" << std::flush;
             }
 
             if (!usrInput.empty()) {
-                // single completion
+                // single completion (executable)
                 if (tabCount == 1 && match.size() == 1) {
                     // clear the current line
                     std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
                     usrInput.clear();
 
-                    for (const std::string &str : match) {
-                        for (const char &c : str) {
-                            usrInput.push_back(c);
-                            std::cout << c << std::flush;
-                        }
-                        std::cout << ' ' << std::flush;
-                        usrInput.push_back(' ');
+                    for (char i : match[0]) {
+                        usrInput.push_back(i);
+                        std::cout << i << std::flush;
                     }
+
+                    std::cout << ' ' << std::flush;
+                    usrInput.push_back(' ');
+                    continue;
                 }
 
-                // partial completion
+                // partial completion (executable)
                 if (tabCount == 1 && match.size() > 1) {
                     std::string lcp = autocomplete.lcp(match);
 
@@ -76,14 +78,13 @@ std::string parseUsrInput() {
                         usrInput = lcp;
                         std::cout << usrInput << std::flush;
                     } else {
-                        //   it is the bell character.
                         std::cout << "\x07" << std::flush;
                     }
 
                     continue;
                 }
 
-                // multiple completions
+                // multiple completions (executable)
                 if (tabCount == 2 && match.size() > 1) {
                     tabCount = 0;
                     std::cout << "\r\n";
@@ -96,11 +97,34 @@ std::string parseUsrInput() {
 
                     continue;
                 }
+
+                // filename completion
+                if (usrInput.find_last_of(' ') != usrInput.length() - 1) {
+                    std::string argument =
+                        usrInput.substr(usrInput.find_last_of(' ') + 1, usrInput.length() - 1);
+                    auto fileMatches = autocomplete.matchFilesInDirectory(argument);
+
+                    // single completion (file)
+                    if (fileMatches.size() == 1) {
+                        std::cout << "\033[" << argument.length() << "D\033[K" << std::flush;
+                        usrInput.resize(usrInput.rfind(argument));
+
+                        for (char i : fileMatches[0]) {
+                            usrInput.push_back(i);
+                            std::cout << i << std::flush;
+                        }
+                        std::cout << ' ' << std::flush;
+                        usrInput.push_back(' ');
+                    }
+
+                    continue;
+                }
             }
             continue;
         }
 
         else if (c == BACKSPACE) {
+            tabCount = 0;
             if (!usrInput.empty()) {
                 usrInput.pop_back();
                 std::cout << "\b \b" << std::flush;

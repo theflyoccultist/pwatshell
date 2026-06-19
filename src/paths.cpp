@@ -4,47 +4,65 @@
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
-#include <stdexcept>
 #include <string>
 #include <unistd.h>
 #include <vector>
 
+constexpr char PATH_LIST_SEPARATOR = ':';
+constexpr size_t PATH_MAX = 1024;
+
 fs::path Paths::getCurrentPath() const { return currentPath; }
+
+bool Paths::isExecutable(const fs::path &candidate) const {
+    if (fs::exists(candidate)) {
+        auto perms = fs::status(candidate).permissions();
+
+        return (perms & fs::perms::owner_exec) != fs::perms::none ||
+               (perms & fs::perms::group_exec) != fs::perms::none ||
+               (perms & fs::perms::others_exec) != fs::perms::none;
+    }
+
+    return false;
+}
 
 fs::path Paths::getExecutablePath(const std::string &cmd) const {
     for (const auto &dir : pathList) {
         fs::path candidate = fs::path(dir) / cmd;
 
-        if (fs::exists(candidate)) {
-            auto perms = fs::status(candidate).permissions();
-
-            bool isExecutable = (perms & fs::perms::owner_exec) != fs::perms::none ||
-                                (perms & fs::perms::group_exec) != fs::perms::none ||
-                                (perms & fs::perms::others_exec) != fs::perms::none;
-
-            if (isExecutable) {
-                return candidate;
-            }
+        if (this->isExecutable(candidate)) {
+            return candidate;
         }
     }
 
     return "";
 }
 
-std::vector<std::string> Paths::getExecutablesInPathEnv() {
+std::vector<std::string> Paths::getExecutablesInPathEnv() const {
     std::vector<std::string> executableList;
 
-    for (auto &pathEnv : pathList) {
+    for (size_t i = 0; auto &pathEnv : pathList) {
         for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {
-            fs::file_status fileStatus = fs::status(dir_entry.path());
-
-            if (fs::exists(fileStatus) &&
-                (fileStatus.permissions() & fs::perms::owner_exec) != fs::perms::none)
-                executableList.emplace_back(dir_entry.path().filename().string());
+            const fs::path &candidate = dir_entry.path();
+            if (this->isExecutable(candidate)) {
+                executableList.emplace_back(candidate.filename().string());
+            }
         }
     }
 
     return executableList;
+}
+
+std::vector<std::string> Paths::getFilesInCurrPath() const {
+    std::vector<std::string> fileList;
+
+    for (auto const &dir_entry : fs::directory_iterator{currentPath}) {
+        const fs::path &candidate = dir_entry.path();
+        if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
+            fileList.emplace_back(candidate.filename().string());
+        }
+    }
+
+    return fileList;
 }
 
 std::string Paths::pwd() {
