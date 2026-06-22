@@ -78,7 +78,13 @@ void Shell::type(const std::vector<std::string> &args) {
 
 void Shell::pwd() { std::cout << paths.pwd() << "\n"; }
 
-void Shell::cd(const std::vector<std::string> &args) { paths.changeDirectory(args[1]); }
+void Shell::cd(const std::vector<std::string> &args) {
+    if (args.size() <= 1) {
+        paths.changeDirectory(paths.getPathHome());
+    } else {
+        paths.changeDirectory(args[1]);
+    }
+}
 
 int Shell::executable(const std::vector<std::string> &args) {
     std::vector<std::string> args_mutable = args;

@@ -18,9 +18,10 @@ class Paths {
     [[nodiscard]] std::string pwd() const;
     void changeDirectory(std::string path);
 
-  private:
     static std::string getPathEnv();
     static std::string getPathHome();
+
+  private:
     static std::vector<std::string> generatePathList();
 
     std::vector<std::string> pathList;

@@ -105,6 +105,8 @@ std::string Parser::parseUsrInput() {
                     argument = tokens.back();
                 }
 
+                std::cout << "\r\n" << argument << "\r\n" << std::flush;
+
                 auto fileMatches = autocomplete.matchFilesInDirectory(argument);
 
                 if (fileMatches.empty()) {
@@ -137,33 +139,36 @@ std::string Parser::parseUsrInput() {
                         std::cout << '/' << std::flush;
                         usrInput.push_back('/');
                     }
+
+                    continue;
+                }
+
+                size_t countDir = 0;
+                size_t dirPos = 0;
+                for (size_t i = 0; i < fileMatches.size(); ++i) {
+                    if (fileMatches[i].isDirectory) {
+                        countDir++;
+                        dirPos = i;
+                    }
+                }
+
+                // multiple matches, but only one directory
+                if (countDir == 1) {
+                    for (char i : fileMatches[dirPos].filename) {
+                        usrInput.push_back(i);
+                        std::cout << i << std::flush;
+                    }
+                    std::cout << '/' << std::flush;
+                    usrInput.push_back('/');
+
                 } else {
-                    size_t countDir = 0;
-                    size_t dirPos = 0;
-                    for (size_t i = 0; i < fileMatches.size(); ++i) {
-                        if (fileMatches[i].isDirectory) {
-                            countDir++;
-                            dirPos = i;
-                        }
-                    }
-
-                    // multiple matches, but only one directory
-                    if (countDir == 1) {
-                        for (char f : fileMatches[dirPos].filename) {
-                            usrInput.push_back(f);
-                            std::cout << f << std::flush;
-                        }
-                        std::cout << '/' << std::flush;
-                        usrInput.push_back('/');
-
-                    } else {
-                        // multiple choices logic do do
-                        std::cout << "this will be for the next step" << std::flush;
-                    }
+                    // multiple choices logic do do
+                    std::cout << "this will be for the next step" << std::flush;
                 }
 
                 continue;
             }
+
             continue;
         }
 
