@@ -54,7 +54,7 @@ std::vector<FileInfo> Paths::getExecutablesInPathEnv() const {
 
 std::vector<FileInfo> Paths::getFilesInCurrPath() const {
     std::vector<FileInfo> fileList;
-    const std::string &pwd = this->pwd();
+    std::string pwd = this->pwd();
 
     for (auto const &dir_entry : fs::directory_iterator{pwd}) {
         const fs::path &candidate = dir_entry.path();

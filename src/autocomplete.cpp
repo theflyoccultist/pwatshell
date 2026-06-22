@@ -38,7 +38,8 @@ std::string AutoComplete::lcp(const std::vector<FileInfo> &words) const {
     return words[0].filename;
 }
 
-std::vector<FileInfo> AutoComplete::matchFilesInDirectory(const std::string &usrInput) const {
+std::vector<FileInfo> AutoComplete::matchFilesInDirectory(const std::string &usrInput) {
+    trieForFiles.clar();
     const std::vector<FileInfo> &files = paths.getFilesInCurrPath();
 
     for (const auto &file : files) {
@@ -49,6 +50,7 @@ std::vector<FileInfo> AutoComplete::matchFilesInDirectory(const std::string &usr
 }
 
 void AutoComplete::initExecutableList() {
+    // built ins
     executableList.emplace_back("echo", false);
     executableList.emplace_back("type", false);
     executableList.emplace_back("pwd", false);

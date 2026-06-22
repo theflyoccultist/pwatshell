@@ -5,17 +5,9 @@
 #include <iostream>
 #include <termios.h>
 #include <vector>
-#include "autocomplete.hpp"
 #include "str.hpp"
 
-namespace Parser {
-
-constexpr size_t MAX_LINE_LEN = 4096;
-constexpr char BACKSPACE = 127;
-
-const AutoComplete autocomplete;
-
-std::string parseUsrInput() {
+std::string Parser::parseUsrInput() {
     std::string usrInput{};
     usrInput.reserve(MAX_LINE_LEN);
 
@@ -112,6 +104,7 @@ std::string parseUsrInput() {
                 } else if (!tokens.empty()) {
                     argument = tokens.back();
                 }
+
                 auto fileMatches = autocomplete.matchFilesInDirectory(argument);
 
                 if (fileMatches.empty()) {
@@ -145,7 +138,28 @@ std::string parseUsrInput() {
                         usrInput.push_back('/');
                     }
                 } else {
-                    // multiple choices logic do do
+                    size_t countDir = 0;
+                    size_t dirPos = 0;
+                    for (size_t i = 0; i < fileMatches.size(); ++i) {
+                        if (fileMatches[i].isDirectory) {
+                            countDir++;
+                            dirPos = i;
+                        }
+                    }
+
+                    // multiple matches, but only one directory
+                    if (countDir == 1) {
+                        for (char f : fileMatches[dirPos].filename) {
+                            usrInput.push_back(f);
+                            std::cout << f << std::flush;
+                        }
+                        std::cout << '/' << std::flush;
+                        usrInput.push_back('/');
+
+                    } else {
+                        // multiple choices logic do do
+                        std::cout << "this will be for the next step" << std::flush;
+                    }
                 }
 
                 continue;
@@ -174,7 +188,7 @@ std::string parseUsrInput() {
 
 const std::unordered_set<std::string> redirects = {">", "1>", "2>", ">>", "1>>", "2>>"};
 
-PipelinePlan parse(const std::vector<std::string> &tokens) {
+PipelinePlan Parser::parse(const std::vector<std::string> &tokens) {
     PipelinePlan plan;
     Command currentCmd;
 
@@ -215,5 +229,3 @@ PipelinePlan parse(const std::vector<std::string> &tokens) {
 
     return plan;
 }
-
-} // namespace Parser
