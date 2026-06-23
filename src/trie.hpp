@@ -79,5 +79,5 @@ class BasicTrie {
         return results;
     }
 
-    void clar() { root = std::make_unique<TrieNode>(); }
+    void clear() { root = std::make_unique<TrieNode>(); }
 };

@@ -39,7 +39,7 @@ std::string AutoComplete::lcp(const std::vector<FileInfo> &words) const {
 }
 
 std::vector<FileInfo> AutoComplete::matchFilesInDirectory(const std::string &usrInput) {
-    trieForFiles.clar();
+    trieForFiles.clear();
     const std::vector<FileInfo> &files = paths.getFilesInCurrPath();
 
     for (const auto &file : files) {
