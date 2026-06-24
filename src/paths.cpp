@@ -60,11 +60,9 @@ std::vector<FileInfo> Paths::getFilesInCurrPath() const {
         const fs::path &candidate = dir_entry.path();
         if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
             std::string file = candidate.string();
-            str::eraseCommonSubString(file, pwd + '/');
             fileList.emplace_back(file, false);
         } else if (fs::is_directory(candidate)) {
             std::string dir = candidate.string();
-            str::eraseCommonSubString(dir, pwd + '/');
             fileList.emplace_back(dir, true);
         }
     }
@@ -79,11 +77,9 @@ std::vector<FileInfo> Paths::getFilesInNewPath(const std::string &newPath) const
         const fs::path &candidate = dir_entry.path();
         if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
             std::string file = candidate.string();
-            str::eraseCommonSubString(file, newPath);
             fileList.emplace_back(file, false);
         } else if (fs::is_directory(candidate)) {
             std::string dir = candidate.string();
-            str::eraseCommonSubString(dir, newPath);
             fileList.emplace_back(dir, true);
         }
     }

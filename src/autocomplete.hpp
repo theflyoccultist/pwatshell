@@ -12,7 +12,9 @@ class AutoComplete {
 
     [[nodiscard]] std::vector<FileInfo> execMatch(const std::string &usrInput) const;
     [[nodiscard]] std::string lcp(const std::vector<FileInfo> &words) const;
-    [[nodiscard]] std::vector<FileInfo> fileMatch(const std::string &usrInput);
+
+    [[nodiscard]] std::string getAbsolutePath() const;
+    std::vector<FileInfo> fileMatch(const std::string &usrInput);
     void refreshFilesTrie(const std::string &usrInput);
 
   private:

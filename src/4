@@ -95,16 +95,14 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
     }
 
     if (matchingFiles.size() == 1) {
-        std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
-
-        size_t index = usrInput.rfind(fileName);
-        if (index != std::string::npos) {
-            usrInput.resize(index);
-        }
-
-        // str::eraseCommonSubString(match.filename, autocomplete.getAbsolutePath() + '/');
-
         FileInfo match = matchingFiles[0];
+        std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
+        // str::eraseCommonSubString(match.filename, autocomplete.getAbsolutePath() + '/');
+        //
+        // size_t index = usrInput.rfind(fileName);
+        // if (index != std::string::npos) {
+        //     usrInput.resize(index);
+        // }
 
         for (char i : match.filename) {
             usrInput.push_back(i);

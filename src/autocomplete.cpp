@@ -39,16 +39,7 @@ std::string AutoComplete::lcp(const std::vector<FileInfo> &words) const {
     return words[0].filename;
 }
 
-void AutoComplete::refreshFilesTrie(const std::string &usrInput) {
-    trieForFiles.clear();
-    const std::string &newPath = paths.pwd() + '/' + usrInput;
-    const std::vector<FileInfo> &filesInNewPath = paths.getFilesInNewPath(newPath);
-    std::cout << "\r\n newPath: " << newPath << std::flush;
-
-    for (const auto &file : filesInNewPath) {
-        trieForFiles.insert(file);
-    }
-}
+std::string AutoComplete::getAbsolutePath() const { return paths.pwd(); }
 
 std::vector<FileInfo> AutoComplete::fileMatch(const std::string &usrInput) {
     trieForFiles.clear();
@@ -59,6 +50,18 @@ std::vector<FileInfo> AutoComplete::fileMatch(const std::string &usrInput) {
     }
 
     return trieForFiles.getSuggestions(usrInput);
+}
+
+void AutoComplete::refreshFilesTrie(const std::string &usrInput) {
+    trieForFiles.clear();
+    const std::string &newPath = paths.pwd() + '/' + usrInput;
+    const std::vector<FileInfo> &filesInNewPath = paths.getFilesInNewPath(newPath);
+
+    std::cout << "\r\n newPath: " << newPath << std::flush;
+
+    for (const auto &file : filesInNewPath) {
+        trieForFiles.insert(file);
+    }
 }
 
 void AutoComplete::initExecutableList() {
