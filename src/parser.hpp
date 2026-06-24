@@ -1,9 +1,9 @@
 #pragma once
 
+#include "autocompletemanager.hpp"
 #include "pipeline.hpp"
 #include <string>
 #include <vector>
-#include "autocomplete.hpp"
 
 class Parser {
   public:
@@ -14,5 +14,5 @@ class Parser {
     static constexpr size_t MAX_LINE_LEN = 4096;
     static constexpr char BACKSPACE = 127;
 
-    AutoComplete autocomplete;
+    AutoCompleteManager autocompletemanager;
 };

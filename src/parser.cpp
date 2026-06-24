@@ -5,7 +5,6 @@
 #include <iostream>
 #include <termios.h>
 #include <vector>
-#include "str.hpp"
 
 std::string Parser::parseUsrInput() {
     std::string usrInput{};
@@ -25,159 +24,23 @@ std::string Parser::parseUsrInput() {
     tcsetattr(STDIN_FILENO, TCSANOW, &term_raw);
 
     char c{};
-    int tabCount = 0;
-    while (true) {
-        ssize_t bytesRead = read(STDIN_FILENO, &c, 1);
-        if (bytesRead <= 0)
-            break;
-
-        // In raw mode Enter is '\r' (carriage return)
+    int tabCount{};
+    while (read(STDIN_FILENO, &c, 1) > 0) {
         if (c == '\r' || c == '\n') {
             std::cout << "\r\n";
             break;
+
         } else if (c == '\t') {
             tabCount++;
-            // executable completion
-            auto match = autocomplete.match(usrInput);
-
-            if (match.empty() || usrInput.empty()) {
-                tabCount = 0;
-                //   it is the bell character.
-                std::cout << "\x07" << std::flush;
-            }
-
-            if (!usrInput.empty()) {
-                // single completion (executable)
-                if (tabCount == 1 && match.size() == 1) {
-                    // clear the current line
-                    std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-                    usrInput.clear();
-
-                    for (char i : match[0].filename) {
-                        usrInput.push_back(i);
-                        std::cout << i << std::flush;
-                    }
-
-                    std::cout << ' ' << std::flush;
-                    usrInput.push_back(' ');
-                    continue;
-                }
-
-                // partial completion (executable)
-                if (tabCount == 1 && match.size() > 1) {
-                    std::string lcp = autocomplete.lcp(match);
-
-                    if (lcp.length() > usrInput.length()) {
-                        tabCount = 0;
-                        std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-                        usrInput = lcp;
-                        std::cout << usrInput << std::flush;
-                    } else {
-                        std::cout << "\x07" << std::flush;
-                    }
-
-                    continue;
-                }
-
-                // multiple completions (executable)
-                if (tabCount == 2 && match.size() > 1) {
-                    tabCount = 0;
-                    std::cout << "\r\n";
-
-                    for (const auto &[str, _] : match) {
-                        std::cout << str << "  ";
-                    }
-
-                    std::cout << "\r\n$ " << usrInput << std::flush;
-
-                    continue;
-                }
-
-                // filename completion
-                auto tokens = str::tokenize(usrInput);
-                std::string argument = "";
-
-                bool endsWithSpace = (!usrInput.empty() && usrInput.back() == ' ');
-
-                if (endsWithSpace) {
-                    argument = "";
-                } else if (!tokens.empty()) {
-                    argument = tokens.back();
-                }
-
-                std::cout << "\r\n" << argument << "\r\n" << std::flush;
-
-                auto fileMatches = autocomplete.matchFilesInDirectory(argument);
-
-                if (fileMatches.empty()) {
-                    std::cout << "\x07" << std::flush;
-                    continue;
-                }
-
-                if (fileMatches.size() == 1) {
-                    const auto &candidate = fileMatches[0];
-
-                    // single completion (file or directory)
-                    if (!argument.empty()) {
-                        std::cout << "\033[" << argument.length() << "D\033[K" << std::flush;
-
-                        size_t index = usrInput.rfind(argument);
-                        if (index != std::string::npos) {
-                            usrInput.resize(index);
-                        }
-                    }
-
-                    for (char i : candidate.filename) {
-                        usrInput.push_back(i);
-                        std::cout << i << std::flush;
-                    }
-
-                    if (!candidate.isDirectory) {
-                        std::cout << ' ' << std::flush;
-                        usrInput.push_back(' ');
-                    } else {
-                        std::cout << '/' << std::flush;
-                        usrInput.push_back('/');
-                    }
-
-                    continue;
-                }
-
-                size_t countDir = 0;
-                size_t dirPos = 0;
-                for (size_t i = 0; i < fileMatches.size(); ++i) {
-                    if (fileMatches[i].isDirectory) {
-                        countDir++;
-                        dirPos = i;
-                    }
-                }
-
-                // multiple matches, but only one directory
-                if (countDir == 1) {
-                    for (char i : fileMatches[dirPos].filename) {
-                        usrInput.push_back(i);
-                        std::cout << i << std::flush;
-                    }
-                    std::cout << '/' << std::flush;
-                    usrInput.push_back('/');
-
-                } else {
-                    // multiple choices logic do do
-                    std::cout << "this will be for the next step" << std::flush;
-                }
-
-                continue;
-            }
-
+            autocompletemanager.completion(tabCount, usrInput);
             continue;
-        }
 
-        else if (c == BACKSPACE) {
-            tabCount = 0;
+        } else if (c == BACKSPACE) {
             if (!usrInput.empty()) {
                 usrInput.pop_back();
                 std::cout << "\b \b" << std::flush;
             }
+
             continue;
         }
 

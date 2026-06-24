@@ -13,7 +13,7 @@ AutoComplete::AutoComplete() {
     }
 }
 
-std::vector<FileInfo> AutoComplete::match(const std::string &usrInput) const {
+std::vector<FileInfo> AutoComplete::execMatch(const std::string &usrInput) const {
     return trieForExecutables.getSuggestions(usrInput);
 }
 
@@ -38,7 +38,7 @@ std::string AutoComplete::lcp(const std::vector<FileInfo> &words) const {
     return words[0].filename;
 }
 
-std::vector<FileInfo> AutoComplete::matchFilesInDirectory(const std::string &usrInput) {
+std::vector<FileInfo> AutoComplete::fileMatch(const std::string &usrInput) {
     trieForFiles.clear();
     const std::vector<FileInfo> &files = paths.getFilesInCurrPath();
 
