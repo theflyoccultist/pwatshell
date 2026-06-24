@@ -20,7 +20,7 @@ void AutoCompleteManager::completion(int &tabCount, std::string &usrInput) {
     } else if (tokenized.size() > 1) {
         std::string fileName = tokenized.back();
         const auto matchingFiles = autocomplete.fileMatch(fileName);
-        this->fileCompletion(matchingFiles, usrInput, fileName);
+        this->fileCompletion(tabCount, matchingFiles, usrInput, fileName);
     }
 }
 
@@ -76,7 +76,7 @@ void AutoCompleteManager::execCompletion(int &tabCount,
     }
 }
 
-void AutoCompleteManager::fileCompletion(const std::vector<FileInfo> &matchingFiles,
+void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileInfo> &matchingFiles,
                                          std::string &usrInput, std::string &fileName) {
     if (matchingFiles.empty()) {
         std::cout << "\x07" << std::flush;
@@ -100,15 +100,35 @@ void AutoCompleteManager::fileCompletion(const std::vector<FileInfo> &matchingFi
         if (matchingFiles[0].isDirectory) {
             std::cout << '/' << std::flush;
             fileName.push_back('/');
-            autocomplete.refreshFilesTrie(fileName);
         } else {
             std::cout << ' ' << std::flush;
             fileName.push_back(' ');
         }
 
-        usrInput += fileName;
-
-    } else {
-        std::cout << "\r\n$ " << "metching files more than one" << std::flush;
+        usrInput = fileName;
     }
+
+    if (matchingFiles.size() > 1) {
+        if (tabCount == 1) {
+
+            // lcp to do
+            return;
+        }
+
+        if (tabCount == 2) {
+            tabCount = 0;
+            std::cout << "\r\n";
+
+            for (const auto &[str, _] : matchingFiles) {
+                std::cout << str << "  ";
+            }
+
+            std::cout << "\r\n$ " << usrInput << std::flush;
+            return;
+        }
+    }
+}
+
+void AutoCompleteManager::nestedFileCompletion(std::string &fileName) {
+    autocomplete.refreshFilesTrie(fileName);
 }

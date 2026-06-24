@@ -12,6 +12,7 @@ class AutoCompleteManager {
 
     void execCompletion(int &tabCount, const std::vector<FileInfo> &matchingExecutables,
                         std::string &usrInput);
-    void fileCompletion(const std::vector<FileInfo> &matchingFiles, std::string &usrInput,
-                        std::string &fileName);
+    void fileCompletion(int &tabCount, const std::vector<FileInfo> &matchingFiles,
+                        std::string &usrInput, std::string &fileName);
+    void nestedFileCompletion(std::string &fileName);
 };
