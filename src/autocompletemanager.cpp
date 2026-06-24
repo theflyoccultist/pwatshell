@@ -96,7 +96,9 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
     }
 
     if (matchingFiles.size() == 1) {
-        std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
+        if (!fileName.empty()) {
+            std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
+        }
 
         size_t index = usrInput.rfind(fileName);
         if (index != std::string::npos) {
