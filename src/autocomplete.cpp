@@ -54,13 +54,11 @@ std::vector<FileInfo> AutoComplete::fileMatch(const std::string &usrInput) {
 
 void AutoComplete::refreshFilesTrie(const std::string &usrInput) {
     trieForFiles.clear();
-    const std::string &newPath = paths.pwd() + '/' + usrInput;
-    const std::vector<FileInfo> &filesInNewPath = paths.getFilesInNewPath(newPath);
-
-    std::cout << "\r\n newPath: " << newPath << std::flush;
+    const std::vector<FileInfo> &filesInNewPath = paths.getFilesInNewPath(usrInput);
 
     for (const auto &file : filesInNewPath) {
         trieForFiles.insert(file);
+        // std::cout << "\r\n newPath: " << file.filename << "\r\n" << std::flush;
     }
 }
 

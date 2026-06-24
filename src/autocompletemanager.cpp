@@ -88,8 +88,9 @@ void AutoCompleteManager::execCompletion(int &tabCount,
 }
 
 void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileInfo> &matchingFiles,
-                                         std::string &usrInput, std::string &fileName) {
+                                         std::string &usrInput, const std::string &fileName) {
     if (matchingFiles.empty()) {
+        tabCount = 0;
         std::cout << "\x07" << std::flush;
         return;
     }
@@ -102,11 +103,11 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
             usrInput.resize(index);
         }
 
-        // str::eraseCommonSubString(match.filename, autocomplete.getAbsolutePath() + '/');
+        const FileInfo &match = matchingFiles[0];
+        std::string printMatch = match.filename;
+        str::eraseCommonSubString(printMatch, autocomplete.getAbsolutePath() + '/');
 
-        FileInfo match = matchingFiles[0];
-
-        for (char i : match.filename) {
+        for (char i : printMatch) {
             usrInput.push_back(i);
             std::cout << i << std::flush;
         }
@@ -118,6 +119,8 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
             std::cout << ' ' << std::flush;
             usrInput.push_back(' ');
         }
+
+        return;
     }
 
     if (matchingFiles.size() > 1) {
@@ -141,6 +144,22 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
     }
 }
 
-void AutoCompleteManager::nestedFileCompletion(std::string &fileName) {
-    autocomplete.refreshFilesTrie(fileName);
+void AutoCompleteManager::nestedFileCompletion(const std::vector<FileInfo> &matchingFiles,
+                                               std::string &usrInput) {
+    // autocomplete.refreshFilesTrie(match.filename + '/');
+    //
+    // size_t countDir = 0;
+    // size_t dirPos = 0;
+    // for (size_t i = 0; i < filesInNestedPath.size(); ++i) {
+    //     if (filesInNestedPath[i].isDirectory) {
+    //         countDir++;
+    //         dirPos = i;
+    //     }
+    // }
+    //
+    // if (countDir == 1) {
+    //     std::cout << "\r\nmatching directory: " << filesInNestedPath[dirPos].filename << "\r\n"
+    //               << std::flush;
+    //     usrInput += filesInNestedPath[dirPos].filename;
+    // }
 }
