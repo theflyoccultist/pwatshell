@@ -13,20 +13,15 @@ void AutoCompleteManager::completion(int &tabCount, std::string &usrInput) {
 
     const auto tokenized = str::tokenize(usrInput);
 
-    std::string execName = tokenized.front();
-    std::string fileName = tokenized.back();
-
-    // std::cout << "\r\nexecName: " << execName << std::flush;
-    // std::cout << "\r\nfileName: " << fileName << std::flush;
-    // std::cout << "\r\ntoken size: " << tokenized.size() << std::flush;
-    //
     if (tokenized.size() == 1) {
+        const std::string &execName = tokenized.front();
         const auto matchingExecutables = autocomplete.execMatch(execName);
         this->execCompletion(tabCount, matchingExecutables, usrInput);
+    } else if (tokenized.size() > 1) {
+        std::string fileName = tokenized.back();
+        const auto matchingFiles = autocomplete.fileMatch(fileName);
+        this->fileCompletion(matchingFiles, usrInput, fileName);
     }
-
-    const auto matchingFiles = autocomplete.fileMatch(fileName);
-    this->fileCompletion(matchingFiles, usrInput, fileName);
 }
 
 void AutoCompleteManager::execCompletion(int &tabCount,
@@ -90,6 +85,11 @@ void AutoCompleteManager::fileCompletion(const std::vector<FileInfo> &matchingFi
 
     if (matchingFiles.size() == 1) {
         std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
+        size_t index = usrInput.rfind(fileName);
+        if (index != std::string::npos) {
+            usrInput.resize(index);
+        }
+
         fileName.clear();
 
         for (char i : matchingFiles[0].filename) {
@@ -97,7 +97,18 @@ void AutoCompleteManager::fileCompletion(const std::vector<FileInfo> &matchingFi
             std::cout << i << std::flush;
         }
 
+        if (matchingFiles[0].isDirectory) {
+            std::cout << '/' << std::flush;
+            fileName.push_back('/');
+            autocomplete.refreshFilesTrie(fileName);
+        } else {
+            std::cout << ' ' << std::flush;
+            fileName.push_back(' ');
+        }
+
         usrInput += fileName;
+
+    } else {
+        std::cout << "\r\n$ " << "metching files more than one" << std::flush;
     }
-    std::cout << "\r\n$ " << "metching files more than one" << std::flush;
 }

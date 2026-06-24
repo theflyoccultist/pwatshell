@@ -72,6 +72,25 @@ std::vector<FileInfo> Paths::getFilesInCurrPath() const {
     return fileList;
 }
 
+std::vector<FileInfo> Paths::getFilesInNewPath(const std::string &newPath) const {
+    std::vector<FileInfo> fileList;
+
+    for (auto const &dir_entry : fs::directory_iterator{newPath}) {
+        const fs::path &candidate = dir_entry.path();
+        if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
+            std::string file = candidate.string();
+            str::eraseCommonSubString(file, newPath);
+            fileList.emplace_back(file, false);
+        } else if (fs::is_directory(candidate)) {
+            std::string dir = candidate.string();
+            str::eraseCommonSubString(dir, newPath);
+            fileList.emplace_back(dir, true);
+        }
+    }
+
+    return fileList;
+}
+
 std::string Paths::pwd() const {
     std::array<char, PATH_MAX> buffer{};
     if (::getcwd(buffer.data(), buffer.size()) == nullptr) {
