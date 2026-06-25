@@ -44,46 +44,35 @@ void AutoCompleteManager::execCompletion(int &tabCount,
         return;
     }
 
-    if (matchingExecutables.size() == 1) {
-        std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-        usrInput.clear();
+    if (tabCount == 1) {
+        std::string lcp = autocomplete.lcp(matchingExecutables);
 
-        for (char i : matchingExecutables[0].filename) {
-            usrInput.push_back(i);
-            std::cout << i << std::flush;
+        if (lcp.length() > usrInput.length()) {
+            tabCount = 0;
+            std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
+            usrInput = lcp;
+            std::cout << usrInput << std::flush;
+
+            if (matchingExecutables.size() == 1) {
+                std::cout << ' ' << std::flush;
+                usrInput.push_back(' ');
+            }
+        } else {
+            std::cout << "\x07" << std::flush;
         }
-
-        std::cout << ' ' << std::flush;
-        usrInput.push_back(' ');
         return;
     }
 
-    if (matchingExecutables.size() > 1) {
-        if (tabCount == 1) {
-            std::string lcp = autocomplete.lcp(matchingExecutables);
+    if (tabCount == 2) {
+        tabCount = 0;
+        std::cout << "\r\n";
 
-            if (lcp.length() > usrInput.length()) {
-                tabCount = 0;
-                std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-                usrInput = lcp;
-                std::cout << usrInput << std::flush;
-            } else {
-                std::cout << "\x07" << std::flush;
-            }
-            return;
+        for (const auto &[str, _] : matchingExecutables) {
+            std::cout << str << "  ";
         }
 
-        if (tabCount == 2) {
-            tabCount = 0;
-            std::cout << "\r\n";
-
-            for (const auto &[str, _] : matchingExecutables) {
-                std::cout << str << "  ";
-            }
-
-            std::cout << "\r\n$ " << usrInput << std::flush;
-            return;
-        }
+        std::cout << "\r\n$ " << usrInput << std::flush;
+        return;
     }
 }
 
@@ -141,6 +130,7 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
 
                 usrInput += lcp;
                 std::cout << usrInput << std::flush;
+
             } else {
                 std::cout << "\x07" << std::flush;
             }
