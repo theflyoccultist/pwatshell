@@ -126,10 +126,26 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
     }
 
     if (matchingFiles.size() > 1) {
-        // if (tabCount == 1) {
-        //     // lcp to do
-        //     return;
-        // }
+        if (tabCount == 1) {
+            std::string lcp = autocomplete.lcp(matchingFiles);
+
+            if (lcp.length() > usrInput.length()) {
+                tabCount = 0;
+                std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
+                str::eraseCommonSubString(lcp, autocomplete.getAbsolutePath() + '/');
+
+                size_t index = usrInput.rfind(fileName);
+                if (index != std::string::npos) {
+                    usrInput.resize(index);
+                }
+
+                usrInput += lcp;
+                std::cout << usrInput << std::flush;
+            } else {
+                std::cout << "\x07" << std::flush;
+            }
+            return;
+        }
 
         if (tabCount == 2) {
             tabCount = 0;
