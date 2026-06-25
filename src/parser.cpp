@@ -31,8 +31,7 @@ std::string Parser::parseUsrInput() {
             break;
 
         } else if (c == '\t') {
-            tabCount++;
-            autocompletemanager.completion(tabCount, usrInput);
+            autocompletemanager.completion(usrInput);
             continue;
 
         } else if (c == BACKSPACE) {
