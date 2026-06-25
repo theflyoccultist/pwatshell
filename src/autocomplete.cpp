@@ -58,7 +58,7 @@ void AutoComplete::refreshFilesTrie(const std::string &usrInput) {
 
     for (const auto &file : filesInNewPath) {
         trieForFiles.insert(file);
-        // std::cout << "\r\n newPath: " << file.filename << "\r\n" << std::flush;
+        std::cout << "\r\n newPath: " << file.filename << "\r\n" << std::flush;
     }
 }
 
