@@ -84,71 +84,49 @@ void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileIn
         return;
     }
 
-    if (matchingFiles.size() == 1) {
-        if (!fileName.empty()) {
-            std::cout << "\033[" << fileName.length() << "D\033[K" << std::flush;
-        }
+    if (tabCount == 1) {
+        std::string lcp = autocomplete.lcp(matchingFiles);
 
-        size_t index = usrInput.rfind(fileName);
-        if (index != std::string::npos) {
-            usrInput.resize(index);
-        }
+        if (lcp.length() > usrInput.length()) {
+            tabCount = 0;
+            std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
+            str::eraseCommonSubString(lcp, autocomplete.getAbsolutePath() + '/');
 
-        const FileInfo &match = matchingFiles[0];
-        std::string printMatch = match.filename;
-        str::eraseCommonSubString(printMatch, autocomplete.getAbsolutePath() + '/');
+            size_t index = usrInput.rfind(fileName);
+            if (index != std::string::npos) {
+                usrInput.resize(index);
+            }
 
-        for (char i : printMatch) {
-            usrInput.push_back(i);
-            std::cout << i << std::flush;
-        }
+            usrInput += lcp;
+            std::cout << usrInput << std::flush;
 
-        if (match.isDirectory) {
-            std::cout << '/' << std::flush;
-            usrInput.push_back('/');
+            if (matchingFiles.size() == 1) {
+                if (matchingFiles[0].isDirectory) {
+                    std::cout << '/' << std::flush;
+                    usrInput.push_back('/');
+                } else {
+                    std::cout << ' ' << std::flush;
+                    usrInput.push_back(' ');
+                }
+            }
+
         } else {
-            std::cout << ' ' << std::flush;
-            usrInput.push_back(' ');
+            std::cout << "\x07" << std::flush;
         }
-
         return;
     }
 
-    if (matchingFiles.size() > 1) {
-        if (tabCount == 1) {
-            std::string lcp = autocomplete.lcp(matchingFiles);
+    if (tabCount == 2) {
+        tabCount = 0;
+        std::cout << "\r\n";
 
-            if (lcp.length() > usrInput.length()) {
-                tabCount = 0;
-                std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-                str::eraseCommonSubString(lcp, autocomplete.getAbsolutePath() + '/');
-
-                size_t index = usrInput.rfind(fileName);
-                if (index != std::string::npos) {
-                    usrInput.resize(index);
-                }
-
-                usrInput += lcp;
-                std::cout << usrInput << std::flush;
-
-            } else {
-                std::cout << "\x07" << std::flush;
-            }
-            return;
+        for (auto [str, _] : matchingFiles) {
+            str::eraseCommonSubString(str, autocomplete.getAbsolutePath() + '/');
+            std::cout << str << "  ";
         }
 
-        if (tabCount == 2) {
-            tabCount = 0;
-            std::cout << "\r\n";
-
-            for (auto [str, _] : matchingFiles) {
-                str::eraseCommonSubString(str, autocomplete.getAbsolutePath() + '/');
-                std::cout << str << "  ";
-            }
-
-            std::cout << "\r\n$ " << usrInput << std::flush;
-            return;
-        }
+        std::cout << "\r\n$ " << usrInput << std::flush;
+        return;
     }
 }
 
