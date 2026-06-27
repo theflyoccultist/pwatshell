@@ -1,15 +1,7 @@
 #pragma once
 
-#include "autocomplete.hpp"
-#include <string>
+namespace AutoCompleteManager {
 
-class AutoCompleteManager {
-  public:
-    void completion(int &tabCount, std::string &usrInput);
+char **shellCompletion(const char *usrInput, int start, int end);
 
-  private:
-    AutoComplete autocomplete;
-
-    void execCompletion(int &tabCount, const std::vector<FileInfo> &matchingExecutables,
-                        std::string &usrInput);
-};
+}

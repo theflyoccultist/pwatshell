@@ -5,13 +5,12 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-#include "fileinfo.hpp"
 
 class BasicTrie {
   private:
     struct TrieNode {
         std::unordered_map<char, std::unique_ptr<TrieNode>> children;
-        std::unique_ptr<FileInfo> fileData = nullptr;
+        std::unique_ptr<std::string> fileData = nullptr;
     };
 
     std::unique_ptr<TrieNode> root;
@@ -31,7 +30,7 @@ class BasicTrie {
         return current;
     }
 
-    void collectFilesHelper(const TrieNode *node, std::vector<FileInfo> &results) const {
+    void collectFilesHelper(const TrieNode *node, std::vector<std::string> &results) const {
         if (!node)
             return;
 
@@ -47,21 +46,21 @@ class BasicTrie {
   public:
     BasicTrie() : root(std::make_unique<TrieNode>()) {}
 
-    void insert(const FileInfo &info) const {
+    void insert(const std::string &info) const {
         TrieNode *current = root.get();
 
-        for (char ch : info.filename) {
+        for (char ch : info) {
             if (current->children.find(ch) == current->children.end()) {
                 current->children[ch] = std::make_unique<TrieNode>();
             }
 
             current = current->children[ch].get();
         }
-        current->fileData = std::make_unique<FileInfo>(info);
+        current->fileData = std::make_unique<std::string>(info);
     }
 
-    [[nodiscard]] std::vector<FileInfo> getSuggestions(const std::string &prefix) const {
-        std::vector<FileInfo> results;
+    [[nodiscard]] std::vector<std::string> getSuggestions(const std::string &prefix) const {
+        std::vector<std::string> results;
 
         // Find where the user's current input ends in the tree
         const TrieNode *prefixNode = findPrefixNode(prefix);
@@ -73,8 +72,7 @@ class BasicTrie {
         // Gather all words stemming from this node
         collectFilesHelper(prefixNode, results);
 
-        std::ranges::sort(
-            results, [](const FileInfo &a, const FileInfo &b) { return a.filename < b.filename; });
+        std::ranges::sort(results);
 
         return results;
     }

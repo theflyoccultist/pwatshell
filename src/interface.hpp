@@ -1,3 +1,4 @@
+#include "autocompletemanager.hpp"
 #include "parser.hpp"
 #include "pipeline.hpp"
 #include "shell.hpp"
@@ -57,6 +58,7 @@ class interface {
 
         signal(SIGWINCH, sighandler);
 
+        rl_attempted_completion_function = AutoCompleteManager::shellCompletion;
         rl_callback_handler_install(prompt, cb_linehandler);
 
         while (running) {

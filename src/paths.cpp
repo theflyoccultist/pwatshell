@@ -1,5 +1,4 @@
 #include "paths.hpp"
-#include "fileinfo.hpp"
 #include "str.hpp"
 #include <array>
 #include <cstddef>
@@ -37,8 +36,8 @@ fs::path Paths::getExecutablePath(const std::string &cmd) const {
     return "";
 }
 
-std::vector<FileInfo> Paths::getExecutablesInPathEnv() const {
-    std::vector<FileInfo> executableList;
+std::vector<std::string> Paths::getExecutablesInPathEnv() const {
+    std::vector<std::string> executableList;
 
     for (auto &pathEnv : pathList) {
         for (auto const &dir_entry : fs::directory_iterator{pathEnv}) {

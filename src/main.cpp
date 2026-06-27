@@ -1,3 +1,6 @@
 #include "interface.hpp"
 
-int main() { interface interface; }
+int main(int argc, char *argv[]) {
+    interface interface;
+    return 0;
+}
