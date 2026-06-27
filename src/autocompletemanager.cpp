@@ -7,12 +7,6 @@
 #include "autocompletemanager.hpp"
 
 void AutoCompleteManager::completion(int &tabCount, std::string &usrInput) {
-    if (usrInput.empty()) {
-        tabCount = 0;
-        std::cout << "\x07" << std::flush;
-        return;
-    }
-
     const auto tokenized = str::tokenize(usrInput);
 
     bool endsWithSpace = (!usrInput.empty() && std::isspace(usrInput.back()));
@@ -26,12 +20,6 @@ void AutoCompleteManager::completion(int &tabCount, std::string &usrInput) {
         const std::string &execName = endsWithSpace ? "" : tokenized.front();
         const auto matchingExecutables = autocomplete.execMatch(execName);
         this->execCompletion(tabCount, matchingExecutables, usrInput);
-    } else {
-        std::string fileName = endsWithSpace ? "" : tokenized.back();
-        std::string absolutePath = autocomplete.getAbsolutePath() + '/' + fileName;
-        const auto matchingFiles = autocomplete.fileMatch(absolutePath);
-
-        this->fileCompletion(tabCount, matchingFiles, usrInput, fileName);
     }
 }
 
@@ -74,78 +62,4 @@ void AutoCompleteManager::execCompletion(int &tabCount,
         std::cout << "\r\n$ " << usrInput << std::flush;
         return;
     }
-}
-
-void AutoCompleteManager::fileCompletion(int &tabCount, const std::vector<FileInfo> &matchingFiles,
-                                         std::string &usrInput, const std::string &fileName) {
-    if (matchingFiles.empty()) {
-        tabCount = 0;
-        std::cout << "\x07" << std::flush;
-        return;
-    }
-
-    if (tabCount == 1) {
-        std::string lcp = autocomplete.lcp(matchingFiles);
-
-        if (lcp.length() > usrInput.length()) {
-            tabCount = 0;
-            std::cout << "\033[" << usrInput.length() << "D\033[K" << std::flush;
-            str::eraseCommonSubString(lcp, autocomplete.getAbsolutePath() + '/');
-
-            size_t index = usrInput.rfind(fileName);
-            if (index != std::string::npos) {
-                usrInput.resize(index);
-            }
-
-            usrInput += lcp;
-            std::cout << usrInput << std::flush;
-
-            if (matchingFiles.size() == 1) {
-                if (matchingFiles[0].isDirectory) {
-                    std::cout << '/' << std::flush;
-                    usrInput.push_back('/');
-                } else {
-                    std::cout << ' ' << std::flush;
-                    usrInput.push_back(' ');
-                }
-            }
-        } else {
-            std::cout << "\x07" << std::flush;
-        }
-        return;
-    }
-
-    if (tabCount == 2) {
-        tabCount = 0;
-        std::cout << "\r\n";
-
-        for (auto [str, _] : matchingFiles) {
-            str::eraseCommonSubString(str, autocomplete.getAbsolutePath() + '/');
-            std::cout << str << "  ";
-        }
-
-        std::cout << "\r\n$ " << usrInput << std::flush;
-        return;
-    }
-}
-
-// Taking a break from this project as i cannot get this to work
-void AutoCompleteManager::nestedFileCompletion(const std::vector<FileInfo> &matchingFiles,
-                                               std::string &usrInput) {
-    // autocomplete.refreshFilesTrie(match.filename + '/');
-    //
-    // size_t countDir = 0;
-    // size_t dirPos = 0;
-    // for (size_t i = 0; i < filesInNestedPath.size(); ++i) {
-    //     if (filesInNestedPath[i].isDirectory) {
-    //         countDir++;
-    //         dirPos = i;
-    //     }
-    // }
-    //
-    // if (countDir == 1) {
-    //     std::cout << "\r\nmatching directory: " << filesInNestedPath[dirPos].filename << "\r\n"
-    //               << std::flush;
-    //     usrInput += filesInNestedPath[dirPos].filename;
-    // }
 }

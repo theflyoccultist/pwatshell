@@ -7,16 +7,16 @@
 
 class Shell {
   public:
-    void executePipeline(const PipelinePlan &plan, bool &running);
+    void executePipeline(const PipelinePlan &plan, bool &running) const;
 
-    void echo(const std::vector<std::string> &args);
-    void type(const std::vector<std::string> &args);
-    void pwd();
-    void cd(const std::vector<std::string> &args);
-    int executable(const std::vector<std::string> &args);
+    void echo(const std::vector<std::string> &args) const;
+    void type(const std::vector<std::string> &args) const;
+    void pwd() const;
+    void cd(const std::vector<std::string> &args) const;
+    [[nodiscard]] int executable(const std::vector<std::string> &args) const;
 
   private:
     Paths paths;
 
-    void executeCommand(const std::vector<std::string> &args, bool &running);
+    void executeCommand(const std::vector<std::string> &args, bool &running) const;
 };

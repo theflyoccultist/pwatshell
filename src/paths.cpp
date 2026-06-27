@@ -51,42 +51,6 @@ std::vector<FileInfo> Paths::getExecutablesInPathEnv() const {
 
     return executableList;
 }
-
-std::vector<FileInfo> Paths::getFilesInCurrPath() const {
-    std::vector<FileInfo> fileList;
-    std::string pwd = this->pwd();
-
-    for (auto const &dir_entry : fs::directory_iterator{pwd}) {
-        const fs::path &candidate = dir_entry.path();
-        if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
-            std::string file = candidate.string();
-            fileList.emplace_back(file, false);
-        } else if (fs::is_directory(candidate)) {
-            std::string dir = candidate.string();
-            fileList.emplace_back(dir, true);
-        }
-    }
-
-    return fileList;
-}
-
-std::vector<FileInfo> Paths::getFilesInNewPath(const std::string &newPath) const {
-    std::vector<FileInfo> fileList;
-
-    for (auto const &dir_entry : fs::directory_iterator{newPath}) {
-        const fs::path &candidate = dir_entry.path();
-        if (!this->isExecutable(candidate) && fs::is_regular_file(candidate)) {
-            std::string file = candidate.string();
-            fileList.emplace_back(file, false);
-        } else if (fs::is_directory(candidate)) {
-            std::string dir = candidate.string();
-            fileList.emplace_back(dir, true);
-        }
-    }
-
-    return fileList;
-}
-
 std::string Paths::pwd() const {
     std::array<char, PATH_MAX> buffer{};
     if (::getcwd(buffer.data(), buffer.size()) == nullptr) {
@@ -95,7 +59,7 @@ std::string Paths::pwd() const {
     return buffer.data();
 }
 
-void Paths::changeDirectory(std::string path) {
+void Paths::changeDirectory(std::string path) const {
     if (!path.empty() && path[0] == '~') {
         std::string homeEnv = this->getPathHome();
 

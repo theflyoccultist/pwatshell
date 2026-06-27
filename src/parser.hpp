@@ -7,8 +7,7 @@
 
 class Parser {
   public:
-    std::string parseUsrInput();
-    PipelinePlan parse(const std::vector<std::string> &tokens);
+    [[nodiscard]] PipelinePlan parse(const std::vector<std::string> &tokens) const;
 
   private:
     static constexpr size_t MAX_LINE_LEN = 4096;

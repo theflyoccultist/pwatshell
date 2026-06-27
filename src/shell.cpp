@@ -10,8 +10,9 @@
 #include <string>
 #include <sys/wait.h>
 #include <vector>
+#include <readline/readline.h>
 
-void Shell::executePipeline(const PipelinePlan &plan, bool &running) {
+void Shell::executePipeline(const PipelinePlan &plan, bool &running) const {
     IOHandler::RedirectInfo info = {
         .cmdArgs = plan.commands[0].args, // temporary until i get to pipes
         .filename = plan.redirectFilename,
@@ -28,7 +29,7 @@ void Shell::executePipeline(const PipelinePlan &plan, bool &running) {
     }
 }
 
-void Shell::executeCommand(const std::vector<std::string> &args, bool &running) {
+void Shell::executeCommand(const std::vector<std::string> &args, bool &running) const {
     if (args.empty())
         return;
 
@@ -48,15 +49,18 @@ void Shell::executeCommand(const std::vector<std::string> &args, bool &running) 
         this->cd(args);
         break;
     case Options::Exit:
+        rl_callback_handler_remove();
         running = false;
         break;
     case Options::Executable:
-        this->executable(args);
+        if (this->executable(args) == EXIT_FAILURE) {
+            running = false;
+        }
         break;
     }
 }
 
-void Shell::echo(const std::vector<std::string> &args) {
+void Shell::echo(const std::vector<std::string> &args) const {
     for (size_t i = 1; i < args.size(); ++i) {
         std::cout << args[i];
         if (i + 1 < args.size()) {
@@ -66,7 +70,7 @@ void Shell::echo(const std::vector<std::string> &args) {
     std::cout << "\n";
 }
 
-void Shell::type(const std::vector<std::string> &args) {
+void Shell::type(const std::vector<std::string> &args) const {
     if (opts::resolveOption(args[1]) != Options::Executable) {
         std::cout << args[1] << " is a shell builtin\n";
     } else if (paths.getExecutablePath(args[1]) != "") {
@@ -76,9 +80,9 @@ void Shell::type(const std::vector<std::string> &args) {
     }
 }
 
-void Shell::pwd() { std::cout << paths.pwd() << "\n"; }
+void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 
-void Shell::cd(const std::vector<std::string> &args) {
+void Shell::cd(const std::vector<std::string> &args) const {
     if (args.size() <= 1) {
         paths.changeDirectory(paths.getPathHome());
     } else {
@@ -86,7 +90,7 @@ void Shell::cd(const std::vector<std::string> &args) {
     }
 }
 
-int Shell::executable(const std::vector<std::string> &args) {
+int Shell::executable(const std::vector<std::string> &args) const {
     std::vector<std::string> args_mutable = args;
     std::vector<char *> argv;
 
