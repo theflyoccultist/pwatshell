@@ -41,7 +41,7 @@ void interface::cb_linehandler(char *raw_line) {
 
         auto tokens = str::tokenize(inputLine);
         PipelinePlan plan = parser.parse(tokens);
-        shell.executePipeline(plan);
+        shell.run(plan);
     }
 }
 

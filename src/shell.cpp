@@ -15,6 +15,36 @@
 #include <unistd.h>
 #include <vector>
 
+void Shell::run(const PipelinePlan &plan) const {
+    if (plan.commands.empty())
+        return;
+
+    if (plan.commands.size() == 1) {
+        const std::string &cmd_name = plan.commands[0].args[0];
+
+        if (opts::resolveOption(cmd_name) != Options::Executable) {
+            IOHandler::RedirectInfo info = {
+                .cmdArgs = plan.commands[0].args,
+                .filename = plan.redirectFilename,
+                .targetFd = plan.targetFd,
+                .isAppend = plan.isAppend,
+            };
+
+            if (plan.hasRedirect) {
+                IOHandler::redirect(info, [this](const std::vector<std::string> &execArgs) {
+                    this->executeCommand(execArgs);
+                });
+            } else {
+                this->executeCommand(info.cmdArgs);
+            }
+
+            return;
+        }
+    }
+
+    this->executePipeline(plan);
+}
+
 void Shell::executePipeline(const PipelinePlan &plan) const {
     pid_t cpid = 0;
     int status = 0;
@@ -22,16 +52,7 @@ void Shell::executePipeline(const PipelinePlan &plan) const {
     char buf = 0;
     int in_fd = STDIN_FILENO;
 
-    if (plan.commands.size() == 1) {
-        const auto &pwat = plan.commands[0].args;
-        if (pwat[0] == "cd") {
-            this->cd(pwat);
-        }
-    }
-
     for (size_t i = 0; i < plan.commands.size(); ++i) {
-        std::vector<std::string> args_mutable = plan.commands[i].args;
-
         bool pipe_opened = false;
         if (i < plan.commands.size() - 1) {
             if (pipe(pipefd.data()) == -1) {
@@ -59,7 +80,7 @@ void Shell::executePipeline(const PipelinePlan &plan) const {
             close(pipefd[0]);
 
             IOHandler::RedirectInfo info = {
-                .cmdArgs = args_mutable,
+                .cmdArgs = plan.commands[i].args,
                 .filename = plan.redirectFilename,
                 .targetFd = plan.targetFd,
                 .isAppend = plan.isAppend,
@@ -112,12 +133,11 @@ void Shell::executeCommand(const std::vector<std::string> &args) const {
         break;
     // cd and exit can only be executed by a parent process
     case Options::Cd:
+        this->cd(args);
     case Options::Exit:
         break;
     case Options::Executable:
-        if (this->executable(args) == EXIT_FAILURE) {
-            break;
-        }
+        this->executable(args);
         break;
     }
 }
@@ -152,7 +172,7 @@ void Shell::cd(const std::vector<std::string> &args) const {
     }
 }
 
-int Shell::executable(const std::vector<std::string> &args) const {
+void Shell::executable(const std::vector<std::string> &args) const {
     std::vector<std::string> args_mutable = args;
     std::vector<char *> argv;
 
@@ -168,7 +188,7 @@ int Shell::executable(const std::vector<std::string> &args) const {
 
     if (pid < 0) {
         perror("fork failed");
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     if (pid == 0) {
@@ -177,6 +197,6 @@ int Shell::executable(const std::vector<std::string> &args) const {
         exit(EXIT_FAILURE);
     } else {
         ::waitpid(pid, nullptr, 0);
-        return EXIT_SUCCESS;
+        exit(EXIT_SUCCESS);
     }
 }
