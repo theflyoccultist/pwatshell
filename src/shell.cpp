@@ -2,34 +2,99 @@
 #include "opts.hpp"
 #include "paths.hpp"
 #include "iohandler.hpp"
+#include "pipeline.hpp"
 
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <vector>
-#include <readline/readline.h>
 
-void Shell::executePipeline(const PipelinePlan &plan, bool &running) const {
-    IOHandler::RedirectInfo info = {
-        .cmdArgs = plan.commands[0].args, // temporary until i get to pipes
-        .filename = plan.redirectFilename,
-        .targetFd = plan.targetFd,
-        .isAppend = plan.isAppend,
-    };
+void Shell::executePipeline(const PipelinePlan &plan) const {
+    pid_t cpid = 0;
+    int status = 0;
+    std::array<int, 2> pipefd{};
+    char buf = 0;
+    int in_fd = STDIN_FILENO;
 
-    if (plan.hasRedirect) {
-        IOHandler::redirect(info, [this, &running](const std::vector<std::string> &execArgs) {
-            this->executeCommand(execArgs, running);
-        });
-    } else {
-        this->executeCommand(plan.commands[0].args, running);
+    if (plan.commands.size() == 1) {
+        const auto &pwat = plan.commands[0].args;
+        if (pwat[0] == "cd") {
+            this->cd(pwat);
+        }
+    }
+
+    for (size_t i = 0; i < plan.commands.size(); ++i) {
+        std::vector<std::string> args_mutable = plan.commands[i].args;
+
+        bool pipe_opened = false;
+        if (i < plan.commands.size() - 1) {
+            if (pipe(pipefd.data()) == -1) {
+                perror("pipe");
+            }
+            pipe_opened = true;
+        }
+
+        cpid = fork();
+        if (cpid == -1) {
+            perror("fork");
+        }
+
+        if (cpid == 0) {
+            if (dup2(in_fd, STDIN_FILENO) == -1) {
+                perror("dup2 child - read");
+            }
+
+            if (i < plan.commands.size() - 1) {
+                if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+                    perror("dup2 child - write");
+                }
+            }
+
+            close(pipefd[0]);
+
+            IOHandler::RedirectInfo info = {
+                .cmdArgs = args_mutable,
+                .filename = plan.redirectFilename,
+                .targetFd = plan.targetFd,
+                .isAppend = plan.isAppend,
+            };
+
+            if (plan.hasRedirect) {
+                IOHandler::redirect(info, [this](const std::vector<std::string> &execArgs) {
+                    this->executeCommand(execArgs);
+                });
+            } else {
+                this->executeCommand(info.cmdArgs);
+            }
+
+            exit(EXIT_FAILURE);
+
+        } else {
+            if (in_fd != STDIN_FILENO) {
+                close(in_fd);
+            }
+
+            if (pipe_opened) {
+                close(pipefd[1]);
+                in_fd = pipefd[0];
+            }
+        }
+    }
+
+    for (size_t i = 0; i < plan.commands.size(); ++i) {
+        if (wait(nullptr) == -1) {
+            perror("wait");
+        }
     }
 }
 
-void Shell::executeCommand(const std::vector<std::string> &args, bool &running) const {
+void Shell::executeCommand(const std::vector<std::string> &args) const {
     if (args.empty())
         return;
 
@@ -45,12 +110,9 @@ void Shell::executeCommand(const std::vector<std::string> &args, bool &running) 
     case Options::Pwd:
         this->pwd();
         break;
+    // cd and exit can only be executed by a parent process
     case Options::Cd:
-        this->cd(args);
-        break;
     case Options::Exit:
-        rl_callback_handler_remove();
-        running = false;
         break;
     case Options::Executable:
         if (this->executable(args) == EXIT_FAILURE) {

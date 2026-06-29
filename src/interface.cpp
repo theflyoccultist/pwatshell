@@ -33,10 +33,15 @@ void interface::cb_linehandler(char *raw_line) {
         add_history(line.get());
 
         std::string inputLine(line.get());
+        if (inputLine == "exit") {
+            rl_callback_handler_remove();
+            running = false;
+            return;
+        }
 
         auto tokens = str::tokenize(inputLine);
         PipelinePlan plan = parser.parse(tokens);
-        shell.executePipeline(plan, running);
+        shell.executePipeline(plan);
     }
 }
 

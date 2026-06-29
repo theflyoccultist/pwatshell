@@ -7,7 +7,7 @@
 
 class Shell {
   public:
-    void executePipeline(const PipelinePlan &plan, bool &running) const;
+    void executePipeline(const PipelinePlan &plan) const;
 
     void echo(const std::vector<std::string> &args) const;
     void type(const std::vector<std::string> &args) const;
@@ -18,5 +18,5 @@ class Shell {
   private:
     Paths paths;
 
-    void executeCommand(const std::vector<std::string> &args, bool &running) const;
+    void executeCommand(const std::vector<std::string> &args) const;
 };
