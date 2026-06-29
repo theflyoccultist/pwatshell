@@ -54,7 +54,7 @@ void Shell::executeCommand(const std::vector<std::string> &args, bool &running) 
         break;
     case Options::Executable:
         if (this->executable(args) == EXIT_FAILURE) {
-            running = false;
+            break;
         }
         break;
     }
