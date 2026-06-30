@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <vector>
 
-void Shell::run(const PipelinePlan &plan) const {
+void Shell::run(const PipelinePlan &plan) {
     if (plan.commands.empty())
         return;
 
@@ -47,7 +47,7 @@ void Shell::run(const PipelinePlan &plan) const {
     this->executePipeline(plan);
 }
 
-void Shell::executePipeline(const PipelinePlan &plan) const {
+void Shell::executePipeline(const PipelinePlan &plan) {
     pid_t cpid = 0;
     int status = 0;
     std::array<int, 2> pipefd{};
@@ -117,10 +117,13 @@ void Shell::executePipeline(const PipelinePlan &plan) const {
     }
 }
 
-void Shell::executeCommand(const std::vector<std::string> &args) const {
+int Shell::commandcounter{};
+
+void Shell::executeCommand(const std::vector<std::string> &args) {
     if (args.empty())
         return;
 
+    commandcounter++;
     Options opts = opts::resolveOption(args[0]);
 
     switch (opts) {
@@ -134,7 +137,7 @@ void Shell::executeCommand(const std::vector<std::string> &args) const {
         this->pwd();
         break;
     case Options::History:
-        this->history(args);
+        this->historyCmd(commandcounter, args);
         break;
     case Options::Cd:
         this->cd(args);
@@ -169,7 +172,7 @@ void Shell::type(const std::vector<std::string> &args) const {
 
 void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 
-void Shell::history(const std::vector<std::string> &args) const {
+void Shell::historyCmd(int &numcmds, const std::vector<std::string> &args) const {
     if (args.size() <= 1) {
         History::listHistory();
     } else if (args.size() == 2) {
@@ -185,7 +188,7 @@ void Shell::history(const std::vector<std::string> &args) const {
             std::cout << "history: " << args[1] << ": numeric argument required\n";
         }
     } else if (args.size() > 2) {
-        History::parseHistoryFlag(args);
+        History::parseHistoryFlag(numcmds, args);
     }
 }
 

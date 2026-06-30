@@ -2,6 +2,8 @@
 #include "pipeline.hpp"
 #include "autocompletemanager.hpp"
 #include "str.hpp"
+#include "parser.hpp"
+#include "shell.hpp"
 
 #include <memory>
 #include <string>
@@ -21,6 +23,8 @@ bool interface::running = true;
 void interface::sighandler(int sig) { sigwinch_received = 1; }
 
 void interface::cb_linehandler(char *raw_line) {
+    Shell shell;
+    Parser parser;
     std::unique_ptr<char, decltype(&std::free)> line(raw_line, std::free);
 
     if (line == nullptr) {

@@ -1,10 +1,4 @@
-#include "parser.hpp"
-#include "shell.hpp"
-
-namespace {
-const Shell shell;
-const Parser parser;
-} // namespace
+#pragma once
 
 class interface {
   private:
