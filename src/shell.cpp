@@ -3,6 +3,7 @@
 #include "paths.hpp"
 #include "iohandler.hpp"
 #include "pipeline.hpp"
+#include "history.hpp"
 
 #include <array>
 #include <cstdio>
@@ -131,9 +132,12 @@ void Shell::executeCommand(const std::vector<std::string> &args) const {
     case Options::Pwd:
         this->pwd();
         break;
-    // cd and exit can only be executed by a parent process
+    case Options::History:
+        this->history();
+        break;
     case Options::Cd:
         this->cd(args);
+        break;
     case Options::Exit:
         break;
     case Options::Executable:
@@ -163,6 +167,8 @@ void Shell::type(const std::vector<std::string> &args) const {
 }
 
 void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
+
+void Shell::history() const { History::listHistory(); }
 
 void Shell::cd(const std::vector<std::string> &args) const {
     if (args.size() <= 1) {
