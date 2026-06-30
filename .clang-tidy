@@ -3,5 +3,6 @@ Checks: >
   performance-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   modernize-*,
   -modernize-use-trailing-return-type,

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -133,7 +134,7 @@ void Shell::executeCommand(const std::vector<std::string> &args) const {
         this->pwd();
         break;
     case Options::History:
-        this->history();
+        this->history(args);
         break;
     case Options::Cd:
         this->cd(args);
@@ -168,7 +169,23 @@ void Shell::type(const std::vector<std::string> &args) const {
 
 void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 
-void Shell::history() const { History::listHistory(); }
+void Shell::history(const std::vector<std::string> &args) const {
+    if (args.size() <= 1) {
+        History::listHistory();
+    } else {
+        try {
+            int value = std::stoi(args[1]);
+            if (value < 0) {
+                std::cout << "history: " << value << ": invalid option\n";
+            } else {
+                History::listHistory(value);
+            }
+
+        } catch (const std::invalid_argument &e) {
+            std::cout << "history: " << args[1] << ": numeric argument required\n";
+        }
+    }
+}
 
 void Shell::cd(const std::vector<std::string> &args) const {
     if (args.size() <= 1) {

@@ -13,7 +13,7 @@ class Shell {
     void echo(const std::vector<std::string> &args) const;
     void type(const std::vector<std::string> &args) const;
     void pwd() const;
-    void history() const;
+    void history(const std::vector<std::string> &args) const;
     void cd(const std::vector<std::string> &args) const;
     void executable(const std::vector<std::string> &args) const;
 
