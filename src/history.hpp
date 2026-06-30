@@ -3,6 +3,8 @@
 #include <cstring>
 #include <iostream>
 #include <readline/history.h>
+#include <string>
+#include <vector>
 
 namespace History {
 
@@ -20,10 +22,29 @@ void listHistory(int num_entries = 0) {
     }
 }
 
-void readHistory(const char *filename) {
+void readHistoryFromFile(const char *filename) {
     int err = read_history(filename);
     if (err != 0) {
         std::cout << "Error: " << strerror(err) << '\n';
+    }
+}
+
+void writeHistoryToFile(const char *filename) {
+    int err = write_history(filename);
+    if (err != 0) {
+        std::cout << "Error: " << strerror(err) << '\n';
+    }
+}
+
+void parseHistoryFlag(const std::vector<std::string> &args) {
+    if (args.size() <= 2) {
+        return;
+    }
+
+    if (args[1] == "-r") {
+        readHistoryFromFile(args[2].c_str());
+    } else if (args[1] == "-w") {
+        writeHistoryToFile(args[2].c_str());
     }
 }
 

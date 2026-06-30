@@ -185,10 +185,7 @@ void Shell::history(const std::vector<std::string> &args) const {
             std::cout << "history: " << args[1] << ": numeric argument required\n";
         }
     } else if (args.size() > 2) {
-        // make a flag parsing lib if it gets worse
-        if (args[1] == "-r") {
-            History::readHistory(args[2].c_str());
-        }
+        History::parseHistoryFlag(args);
     }
 }
 
