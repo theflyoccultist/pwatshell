@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <iostream>
 #include <readline/history.h>
 
@@ -16,6 +17,13 @@ void listHistory(int num_entries = 0) {
         for (int i = (hist_state->length - num_entries); i < hist_state->length; i++) {
             std::cout << '\t' << i + 1 << "  " << hist_state->entries[i]->line << '\n';
         }
+    }
+}
+
+void readHistory(const char *filename) {
+    int err = read_history(filename);
+    if (err != 0) {
+        std::cout << "Error: " << strerror(err) << '\n';
     }
 }
 

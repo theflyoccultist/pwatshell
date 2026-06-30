@@ -172,7 +172,7 @@ void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 void Shell::history(const std::vector<std::string> &args) const {
     if (args.size() <= 1) {
         History::listHistory();
-    } else {
+    } else if (args.size() == 2) {
         try {
             int value = std::stoi(args[1]);
             if (value < 0) {
@@ -183,6 +183,11 @@ void Shell::history(const std::vector<std::string> &args) const {
 
         } catch (const std::invalid_argument &e) {
             std::cout << "history: " << args[1] << ": numeric argument required\n";
+        }
+    } else if (args.size() > 2) {
+        // make a flag parsing lib if it gets worse
+        if (args[1] == "-r") {
+            History::readHistory(args[2].c_str());
         }
     }
 }
