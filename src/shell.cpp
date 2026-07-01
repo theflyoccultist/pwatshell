@@ -147,8 +147,6 @@ void Shell::executeCommand(const std::vector<std::string> &args) {
     }
 }
 
-void Shell::handleExit() { history.writeOnExit(); }
-
 void Shell::echo(const std::vector<std::string> &args) const {
     for (size_t i = 1; i < args.size(); ++i) {
         std::cout << args[i];

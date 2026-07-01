@@ -17,7 +17,7 @@ History::History() {
     }
 }
 
-void History::writeOnExit() {
+History::~History() {
     std::string histFile = Paths::getPathHist();
     if (!histFile.empty()) {
         this->writeHistoryToFile(histFile.c_str());
@@ -47,11 +47,11 @@ void History::parseHistoryFlag(const std::vector<std::string> &args) {
     const char *filename = args[2].c_str();
 
     if (args[1] == "-r") {
-        readHistoryFromFile(filename);
+        this->readHistoryFromFile(filename);
     } else if (args[1] == "-w") {
-        writeHistoryToFile(filename);
+        this->writeHistoryToFile(filename);
     } else if (args[1] == "-a") {
-        appendHistoryToFile(filename);
+        this->appendHistoryToFile(filename);
     }
 }
 

@@ -1,6 +1,12 @@
 #pragma once
 
+#include "parser.hpp"
+#include "shell.hpp"
+
 class interface {
+  public:
+    interface();
+
   private:
     static bool running;
     static int sigwinch_received;
@@ -9,6 +15,7 @@ class interface {
     static void sighandler(int sig);
     static void cb_linehandler(char *raw_line);
 
-  public:
-    interface();
+    Shell shell;
+    Parser parser;
+    static interface *s_instance;
 };

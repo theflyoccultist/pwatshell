@@ -2,8 +2,6 @@
 #include "pipeline.hpp"
 #include "autocompletemanager.hpp"
 #include "str.hpp"
-#include "parser.hpp"
-#include "shell.hpp"
 
 #include <memory>
 #include <string>
@@ -22,37 +20,13 @@ bool interface::running = true;
 
 void interface::sighandler(int sig) { sigwinch_received = 1; }
 
-void interface::cb_linehandler(char *raw_line) {
-    Shell shell;
-    Parser parser;
-    std::unique_ptr<char, decltype(&std::free)> line(raw_line, std::free);
-
-    if (line == nullptr) {
-        rl_callback_handler_remove();
-        running = false;
-        return;
-    }
-
-    if (*line) {
-        add_history(line.get());
-
-        std::string inputLine(line.get());
-        if (inputLine == "exit") {
-            shell.handleExit();
-            rl_callback_handler_remove();
-            running = false;
-            return;
-        }
-
-        auto tokens = str::tokenize(inputLine);
-        PipelinePlan plan = parser.parse(tokens);
-        shell.run(plan);
-    }
-}
+interface *interface::s_instance = nullptr;
 
 interface::interface() {
     fd_set fds;
     int r{};
+
+    s_instance = this;
 
     std::setlocale(LC_ALL, "");
 
@@ -84,5 +58,30 @@ interface::interface() {
         if (FD_ISSET(fileno(rl_instream), &fds)) {
             rl_callback_read_char();
         }
+    }
+}
+
+void interface::cb_linehandler(char *raw_line) {
+    std::unique_ptr<char, decltype(&std::free)> line(raw_line, std::free);
+
+    if (line == nullptr) {
+        rl_callback_handler_remove();
+        s_instance->running = false;
+        return;
+    }
+
+    if (*line) {
+        add_history(line.get());
+
+        std::string inputLine(line.get());
+        if (inputLine == "exit") {
+            rl_callback_handler_remove();
+            running = false;
+            return;
+        }
+
+        auto tokens = str::tokenize(inputLine);
+        PipelinePlan plan = s_instance->parser.parse(tokens);
+        s_instance->shell.run(plan);
     }
 }

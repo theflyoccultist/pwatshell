@@ -10,7 +10,6 @@
 class Shell {
   public:
     void run(const PipelinePlan &plan);
-    void handleExit();
 
   private:
     void executePipeline(const PipelinePlan &plan);
