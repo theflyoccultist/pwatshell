@@ -9,18 +9,21 @@ enum class Options : uint8_t {
     Type,
     Pwd,
     History,
+    Jobs,
     Cd,
     Exit,
     Executable,
 };
 
 namespace opts {
-static Options resolveOption(const std::string &input) {
-    static const std::unordered_map<std::string, Options> optionsMap = {
-        {"echo", Options::Echo},       {"type", Options::Type}, {"pwd", Options::Pwd},
-        {"history", Options::History}, {"cd", Options::Cd},     {"exit", Options::Exit},
-    };
 
+static const std::unordered_map<std::string, Options> optionsMap = {
+    {"echo", Options::Echo},       {"type", Options::Type}, {"pwd", Options::Pwd},
+    {"history", Options::History}, {"jobs", Options::Jobs}, {"cd", Options::Cd},
+    {"exit", Options::Exit},
+};
+
+static Options resolveOption(const std::string &input) {
     auto it = optionsMap.find(input);
     if (it != optionsMap.end()) {
         return it->second;
@@ -28,4 +31,5 @@ static Options resolveOption(const std::string &input) {
 
     return Options::Executable;
 }
+
 } // namespace opts

@@ -18,6 +18,7 @@ class Shell {
     void type(const std::vector<std::string> &args) const;
     void pwd() const;
     void historyCmd(const std::vector<std::string> &args);
+    void jobsCmd(const std::vector<std::string> &args);
     void cd(const std::vector<std::string> &args) const;
     void executable(const std::vector<std::string> &args) const;
 

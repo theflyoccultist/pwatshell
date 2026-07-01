@@ -10,9 +10,6 @@ class AutoComplete {
     AutoComplete();
 
     [[nodiscard]] std::vector<std::string> execMatch(const std::string &usrInput) const;
-    [[nodiscard]] std::string lcp(const std::vector<std::string> &words) const;
-
-    [[nodiscard]] std::string getAbsolutePath() const;
 
   private:
     std::vector<std::string> executableList;

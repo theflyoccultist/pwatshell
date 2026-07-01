@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "autocomplete.hpp"
+#include "opts.hpp"
 
 AutoComplete::AutoComplete() {
     this->initExecutableList();
@@ -16,17 +17,13 @@ std::vector<std::string> AutoComplete::execMatch(const std::string &usrInput) co
     return trieForExecutables.getSuggestions(usrInput);
 }
 
-std::string AutoComplete::getAbsolutePath() const { return paths.pwd(); }
-
 void AutoComplete::initExecutableList() {
-    // built ins
-    executableList.emplace_back("echo");
-    executableList.emplace_back("type");
-    executableList.emplace_back("pwd");
-    executableList.emplace_back("cd");
-    executableList.emplace_back("exit");
+    // add shell built in names to list
+    for (const auto &builtin : opts::optionsMap) {
+        executableList.emplace_back(builtin.first);
+    }
 
+    // add PATH executable names to list
     const std::vector<std::string> &execNames = paths.getExecutablesInPathEnv();
-
     std::ranges::move(execNames, std::back_inserter(executableList));
 }

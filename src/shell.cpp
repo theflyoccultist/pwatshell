@@ -53,6 +53,7 @@ void Shell::executePipeline(const PipelinePlan &plan) {
     char buf = 0;
     int in_fd = STDIN_FILENO;
 
+    // pipes handling aka taking an entire day to write one function
     for (size_t i = 0; i < plan.commands.size(); ++i) {
         bool pipe_opened = false;
         if (i < plan.commands.size() - 1) {
@@ -67,6 +68,7 @@ void Shell::executePipeline(const PipelinePlan &plan) {
             perror("fork");
         }
 
+        // child processes
         if (cpid == 0) {
             if (dup2(in_fd, STDIN_FILENO) == -1) {
                 perror("dup2 child - read");
@@ -97,6 +99,7 @@ void Shell::executePipeline(const PipelinePlan &plan) {
 
             exit(EXIT_FAILURE);
 
+            // parent process
         } else {
             if (in_fd != STDIN_FILENO) {
                 close(in_fd);
@@ -135,6 +138,9 @@ void Shell::executeCommand(const std::vector<std::string> &args) {
         break;
     case Options::History:
         this->historyCmd(args);
+        break;
+    case Options::Jobs:
+        this->jobsCmd(args);
         break;
     case Options::Cd:
         this->cd(args);
@@ -186,6 +192,12 @@ void Shell::historyCmd(const std::vector<std::string> &args) {
         }
     } else if (args.size() > 2) {
         history.parseHistoryFlag(args);
+    }
+}
+
+void Shell::jobsCmd(const std::vector<std::string> &args) {
+    if (args.empty()) {
+        return;
     }
 }
 
