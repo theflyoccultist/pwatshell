@@ -101,14 +101,17 @@ std::string Paths::getPathHome() {
     return path_str;
 }
 
-const char *Paths::getPathHist() {
+std::string Paths::getPathHist() {
     const char *path = std::getenv("HISTFILE");
+    std::string path_str;
 
     if (path != nullptr) {
-        return path;
+        path_str = path;
     } else {
-        return "";
+        path_str = "";
     }
+
+    return path_str;
 }
 
 std::vector<std::string> Paths::generatePathList() {

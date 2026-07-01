@@ -116,13 +116,11 @@ void Shell::executePipeline(const PipelinePlan &plan) {
     }
 }
 
-int Shell::commandcounter{};
-
 void Shell::executeCommand(const std::vector<std::string> &args) {
     if (args.empty())
         return;
 
-    commandcounter++;
+    state.cmds_since_append++;
     Options opts = opts::resolveOption(args[0]);
 
     switch (opts) {
@@ -136,7 +134,7 @@ void Shell::executeCommand(const std::vector<std::string> &args) {
         this->pwd();
         break;
     case Options::History:
-        this->historyCmd(commandcounter, args);
+        this->historyCmd(args);
         break;
     case Options::Cd:
         this->cd(args);
@@ -148,6 +146,8 @@ void Shell::executeCommand(const std::vector<std::string> &args) {
         break;
     }
 }
+
+void Shell::handleExit() { history.writeOnExit(); }
 
 void Shell::echo(const std::vector<std::string> &args) const {
     for (size_t i = 1; i < args.size(); ++i) {
@@ -171,7 +171,7 @@ void Shell::type(const std::vector<std::string> &args) const {
 
 void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 
-void Shell::historyCmd(int &numcmds, const std::vector<std::string> &args) {
+void Shell::historyCmd(const std::vector<std::string> &args) {
     if (args.size() <= 1) {
         history.listHistory();
     } else if (args.size() == 2) {
@@ -187,7 +187,7 @@ void Shell::historyCmd(int &numcmds, const std::vector<std::string> &args) {
             std::cout << "history: " << args[1] << ": numeric argument required\n";
         }
     } else if (args.size() > 2) {
-        history.parseHistoryFlag(numcmds, args);
+        history.parseHistoryFlag(args);
     }
 }
 
@@ -215,15 +215,15 @@ void Shell::executable(const std::vector<std::string> &args) const {
 
     if (pid < 0) {
         perror("fork failed");
-        exit(EXIT_FAILURE);
+        return;
     }
 
     if (pid == 0) {
         ::execvp(argv[0], argv.data());
         std::cout << argv[0] << ": command not found\n";
-        exit(EXIT_FAILURE);
+        return;
     } else {
         ::waitpid(pid, nullptr, 0);
-        exit(EXIT_SUCCESS);
+        return;
     }
 }

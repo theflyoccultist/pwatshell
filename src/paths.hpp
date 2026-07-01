@@ -18,7 +18,7 @@ class Paths {
 
     static std::string getPathEnv();
     static std::string getPathHome();
-    static const char *getPathHist();
+    static std::string getPathHist();
 
   private:
     static std::vector<std::string> generatePathList();

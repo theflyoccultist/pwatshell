@@ -38,6 +38,7 @@ void interface::cb_linehandler(char *raw_line) {
 
         std::string inputLine(line.get());
         if (inputLine == "exit") {
+            shell.handleExit();
             rl_callback_handler_remove();
             running = false;
             return;

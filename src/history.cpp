@@ -1,5 +1,6 @@
 #include "history.hpp"
 #include "paths.hpp"
+#include "shellstate.hpp"
 #include <fstream>
 #include <iostream>
 #include <cstring>
@@ -8,9 +9,18 @@
 
 History::History() {
     std::ifstream in(Paths::getPathHist());
-    std::string line;
-    while (std::getline(in, line)) {
-        add_history(line.c_str());
+    if (in.is_open()) {
+        std::string line;
+        while (std::getline(in, line)) {
+            add_history(line.c_str());
+        }
+    }
+}
+
+void History::writeOnExit() {
+    std::string histFile = Paths::getPathHist();
+    if (!histFile.empty()) {
+        this->writeHistoryToFile(histFile.c_str());
     }
 }
 
@@ -29,7 +39,7 @@ void History::listHistory(int num_entries) {
     }
 }
 
-void History::parseHistoryFlag(int &numcmds, const std::vector<std::string> &args) {
+void History::parseHistoryFlag(const std::vector<std::string> &args) {
     if (args.size() <= 2) {
         return;
     }
@@ -41,7 +51,7 @@ void History::parseHistoryFlag(int &numcmds, const std::vector<std::string> &arg
     } else if (args[1] == "-w") {
         writeHistoryToFile(filename);
     } else if (args[1] == "-a") {
-        appendHistoryToFile(numcmds, filename);
+        appendHistoryToFile(filename);
     }
 }
 
@@ -59,11 +69,12 @@ void History::writeHistoryToFile(const char *filename) {
     }
 }
 
-void History::appendHistoryToFile(int &cmds_since_append, const char *filename) {
-    int err = append_history(cmds_since_append, filename);
+void History::appendHistoryToFile(const char *filename) {
+    ShellState state;
+    int err = append_history(static_cast<int>(state.cmds_since_append), filename);
     if (err != 0) {
         std::cout << "Error: " << strerror(err) << '\n';
     }
 
-    cmds_since_append = 0;
+    state.cmds_since_append = 0;
 }
