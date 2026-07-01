@@ -16,13 +16,11 @@
 #include <sys/select.h>
 
 int interface::sigwinch_received{};
-bool interface::running = true;
-
 void interface::sighandler(int sig) { sigwinch_received = 1; }
 
 interface *interface::s_instance = nullptr;
 
-interface::interface() {
+void interface::start_loop() {
     fd_set fds;
     int r{};
 
@@ -76,7 +74,7 @@ void interface::cb_linehandler(char *raw_line) {
         std::string inputLine(line.get());
         if (inputLine == "exit") {
             rl_callback_handler_remove();
-            running = false;
+            s_instance->running = false;
             return;
         }
 

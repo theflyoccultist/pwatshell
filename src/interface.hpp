@@ -6,12 +6,13 @@
 class interface {
   public:
     interface();
+    void start_loop();
 
   private:
-    static bool running;
-    static int sigwinch_received;
+    bool running = true;
     const char *prompt = "$ ";
 
+    static int sigwinch_received;
     static void sighandler(int sig);
     static void cb_linehandler(char *raw_line);
 
