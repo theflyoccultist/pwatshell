@@ -3,7 +3,6 @@
 #include "paths.hpp"
 #include "iohandler.hpp"
 #include "pipeline.hpp"
-#include "history.hpp"
 
 #include <array>
 #include <cstdio>
@@ -172,23 +171,23 @@ void Shell::type(const std::vector<std::string> &args) const {
 
 void Shell::pwd() const { std::cout << paths.pwd() << "\n"; }
 
-void Shell::historyCmd(int &numcmds, const std::vector<std::string> &args) const {
+void Shell::historyCmd(int &numcmds, const std::vector<std::string> &args) {
     if (args.size() <= 1) {
-        History::listHistory();
+        history.listHistory();
     } else if (args.size() == 2) {
         try {
             int value = std::stoi(args[1]);
             if (value < 0) {
                 std::cout << "history: " << value << ": invalid option\n";
             } else {
-                History::listHistory(value);
+                history.listHistory(value);
             }
 
         } catch (const std::invalid_argument &e) {
             std::cout << "history: " << args[1] << ": numeric argument required\n";
         }
     } else if (args.size() > 2) {
-        History::parseHistoryFlag(numcmds, args);
+        history.parseHistoryFlag(numcmds, args);
     }
 }
 

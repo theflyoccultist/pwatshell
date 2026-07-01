@@ -101,6 +101,16 @@ std::string Paths::getPathHome() {
     return path_str;
 }
 
+const char *Paths::getPathHist() {
+    const char *path = std::getenv("HISTFILE");
+
+    if (path != nullptr) {
+        return path;
+    } else {
+        return "";
+    }
+}
+
 std::vector<std::string> Paths::generatePathList() {
     std::string pathEnv = getPathEnv();
     std::vector<std::string> pathList = str::splitString(pathEnv, PATH_LIST_SEPARATOR);
