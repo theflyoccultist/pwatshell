@@ -5,7 +5,7 @@
 
 class interface {
   public:
-    interface();
+    interface() = default;
     void start_loop();
 
   private:
