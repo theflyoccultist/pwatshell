@@ -1,34 +1,26 @@
-[![progress-banner](https://backend.codecrafters.io/progress/shell/8f6346d5-c969-4e5d-892b-781bec053576)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Shell Clone in C++
 
-This is a starting point for C++ solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+My own shell implementation, written from scratch in **C++**.
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+This project is being built as part of the **Codecrafters "Build Your Own Shell"** challenge, where the goal was to build a POSIX compliant shell and learn about command parsing, executing programs within a REPL and deal with system calls on Linux.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+> [!NOTE]
+> This has mostly been done for education purposes only, it is by no means a 1:1 replacement of the POSIX Shell.
 
-# Passing the first stage
+## Features
 
-The entry point for your `shell` implementation is in `src/main.cpp`. Study and
-uncomment the relevant code, then run the command below to execute the tests on
-our servers:
+- Shell builtins such as `echo`, `type`, `pwd`, `history`, `jobs`, `cd`, `exit`.
+- Support for running executables in `$PATH`.
+- Filesystem Navigation with `pwd` and `cd`.
+- Support for executables / file names within single and double quotes, and with escape (backslash) characters.
+- Support for redirecting / appending a command's output to a file.
+- Command completion for executables in `$PATH`.
+- Filename completion (had to use the GNU Readline library for that one).
+- Support for multi command pipelines.
+- History navigation with the up and down arrow keys, listing history using the `history` command.
+- History persistence using the `HISTFILE` environment variable.
 
-```sh
-codecrafters submit
-```
+## Work in progress
 
-Time to move on to the next stage!
+- Background Jobs
 
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `cmake` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.cpp`.
-1. Run `codecrafters submit` to submit your solution to CodeCrafters. Test
-   output will be streamed to your terminal.
